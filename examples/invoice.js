@@ -1,8 +1,17 @@
 const { Client } = require("mindee");
 const fs = require("fs");
 
+require('dotenv').config();
+var invoicekey = process.env.MINDEE_INVOICE_TOKEN;
+
+
+
 // Invoice token can be set by Env (MINDEE_INVOICE_TOKEN) or via params (Client({invoiceToken: "token"}))
-const mindeeClient = new Client();
+const mindeeClient = new Client(
+  {
+    invoiceToken:invoicekey
+  }
+);
 
 // parsing invoice from pdf
 mindeeClient.invoice

@@ -1,8 +1,15 @@
 const { Client } = require("mindee");
 const fs = require("fs");
 
+require('dotenv').config();
+var receiptkey = process.env.MINDEE_RECEIPT_TOKEN;
+
+
+
 // Receipt token can be set by Env (MINDEE_RECEIPT_TOKEN) or via params (Client({receiptToken: "token"}))
-const mindeeClient = new Client();
+const mindeeClient = new Client({
+  receiptToken: receiptkey
+});
 
 // parsing receipt from picture
 mindeeClient.receipt

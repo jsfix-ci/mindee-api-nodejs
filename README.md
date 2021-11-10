@@ -52,8 +52,12 @@ We suggest storing your credentials as environment variables for security reason
 const { Client } = require("mindee");
 const fs = require("fs");
 
-// Invoice token can be set by Env (MINDEE_INVOICE_TOKEN) or via params (Client({invoiceToken: "token"}))
-const mindeeClient = new Client();
+// invoiceToken can be set by Env (MINDEE_INVOICE_TOKEN) or via params (Client({invoiceToken: "token"}))
+const mindeeClient = new Client(
+  {
+    invoiceToken: MINDEE_INVOICE_TOKEN
+  }
+);
 
 // parsing invoice from pdf
 mindeeClient.invoice
@@ -74,8 +78,12 @@ mindeeClient.invoice
 const { Client } = require("mindee");
 const fs = require("fs");
 
-// Receipt token can be set by Env (MINDEE_RECEIPT_TOKEN) or via params (Client({receiptToken: "token"}))
-const mindeeClient = new Client();
+// receiptToken can be set by Env (MINDEE_RECEIPT_TOKEN) or via params (Client({receiptToken: "token"}))
+const mindeeClient = new Client(
+    {
+    receiptToken: MINDEE_RECEIPT_TOKEN
+  }
+);
 
 // parsing receipt from picture
 mindeeClient.receipt
@@ -101,7 +109,10 @@ const { Client } = require("mindee");
 // Receipt token can be set by Env (MINDEE_RECEIPT_TOKEN) or via params (Client({receiptToken: "token"}))
 // Invoice token can be set by Env (MINDEE_INVOICE_TOKEN) or via params (Client({invoiceToken: "token"}))
 
-const mindeeClient = new Client();
+const mindeeClient = new Client(
+    invoiceToken:MINDEE_INVOICE_TOKEN,
+	  receiptToken: MINDEE_RECEIPT_TOKEN
+);
 
 // parsing receipt from picture
 mindeeClient.financialDocument

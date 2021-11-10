@@ -1,7 +1,17 @@
 const { Client } = require("mindee");
+require('dotenv').config();
+var receiptkey = process.env.MINDEE_RECEIPT_TOKEN;
+var invoicekey = process.env.MINDEE_INVOICE_TOKEN;
 
-// Receipt token can be set by Env (MINDEE_RECEIPT_TOKEN) or via params (Client({receiptToken: "token"}))
-const mindeeClient = new Client();
+// Receipt/invoice tokens can be set by Env (MINDEE_RECEIPT_TOKEN & MINDEE_INVOICE_TOKEN) as above or via params (Client({receiptToken: "token"}))
+// for fin document "endpoint" both tokens must be used.
+const mindeeClient = new Client(
+  {
+    //both endpoints must be set for this "API" to function correctly
+    invoiceToken:invoicekey,
+	  receiptToken: receiptkey
+  }
+);
 
 // parsing receipt from picture
 mindeeClient.financialDocument
