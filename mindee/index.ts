@@ -1,8 +1,15 @@
-const errorHandler = require("./errors/handler");
-const logger = require("./logger");
-const APIReceipt = require("./api/receipt");
-const APIInvoice = require("./api/invoice");
-const APIFinancialDocument = require("./api/financialDocument");
+import { errorHandler } from "./errors/handler";
+import { logger } from "./logger";
+import { APIReceipt } from "./api/receipt";
+import { APIInvoice } from "./api/invoice";
+import { APIFinancialDocument } from "./api/financialDocument";
+
+interface constructorObject {
+  receiptToken: string;
+  invoiceToken: string;
+  throwOnError: boolean;
+  debug: boolean;
+}
 
 class Client {
   /**
@@ -11,16 +18,22 @@ class Client {
    * @param {boolean} throwOnError - Throw if an error is send from the API / SDK (true by default)
    * @param {boolean} debug - Enable debug logging (disable by default)
    */
+  private readonly receiptToken: string | undefined;
+  private readonly invoiceToken: string | undefined;
+  private readonly receipt: any;
+  private readonly invoice: any;
+  private readonly financialDocument: any;
+
   constructor({
-    receiptToken = undefined,
-    invoiceToken = undefined,
+    receiptToken,
+    invoiceToken,
     throwOnError = true,
-    debug = undefined,
-  } = {}) {
+    debug,
+  }: constructorObject) {
     this.receiptToken = receiptToken || process.env.MINDEE_RECEIPT_TOKEN;
     this.invoiceToken = invoiceToken || process.env.MINDEE_INVOICE_TOKEN;
     errorHandler.throwOnError = throwOnError;
-    logger.level = debug ?? process.env.MINDEE_DEBUG ? "debug" : "warn";
+    logger.level_state = debug ?? process.env.MINDEE_DEBUG ? "debug" : "warn";
     this.receipt = new APIReceipt(this.receiptToken);
     this.invoice = new APIInvoice(this.invoiceToken);
     this.financialDocument = new APIFinancialDocument(
