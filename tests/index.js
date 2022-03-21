@@ -1,5 +1,5 @@
 const expect = require("chai").expect;
-const Client = require("../mindee/index");
+const Client = require("../mindee");
 
 describe("Test client initialization", () => {
   it("should create a client", () => {
