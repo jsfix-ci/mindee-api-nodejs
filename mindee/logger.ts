@@ -17,12 +17,10 @@ const LOGGER_LEVELS: LoggerLevels = {
 };
 
 class Logger implements LoggerInterface {
-  level_state: string | undefined;
-  private readonly level: number;
 
-  constructor(level_state = "debug") {
-    if (!(level_state in LOGGER_LEVELS)) level_state = "debug";
-    this.level = LOGGER_LEVELS[level_state];
+  constructor(public level: string | number = "debug") {
+    if (!(level in LOGGER_LEVELS)) level = "debug";
+    this.level = LOGGER_LEVELS[level];
   }
 
   debug(...args: any[]) {
