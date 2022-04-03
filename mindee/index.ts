@@ -33,7 +33,7 @@ class Client {
     this.receiptToken = receiptToken || process.env.MINDEE_RECEIPT_TOKEN;
     this.invoiceToken = invoiceToken || process.env.MINDEE_INVOICE_TOKEN;
     errorHandler.throwOnError = throwOnError;
-    logger.level_state = debug ?? process.env.MINDEE_DEBUG ? "debug" : "warn";
+    logger.level = debug ?? process.env.MINDEE_DEBUG ? "debug" : "warn";
     this.receipt = new APIReceipt(this.receiptToken);
     this.invoice = new APIInvoice(this.invoiceToken);
     this.financialDocument = new APIFinancialDocument(
