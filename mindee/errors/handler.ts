@@ -5,9 +5,7 @@ interface ErrorHandlerInterface {
 }
 
 class ErrorHandler implements ErrorHandlerInterface {
-  throwOnError: boolean;
-
-  constructor(throwOnError = true) {
+  constructor(public throwOnError: boolean = true) {
     this.throwOnError = throwOnError;
   }
 
