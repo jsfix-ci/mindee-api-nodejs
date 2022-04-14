@@ -1,7 +1,7 @@
 import { logger } from "../logger";
 
 interface ErrorHandlerInterface {
-  throw(error: any, force: boolean): void;
+    throw(error: any): void;
 }
 
 class ErrorHandler implements ErrorHandlerInterface {
@@ -9,7 +9,7 @@ class ErrorHandler implements ErrorHandlerInterface {
     this.throwOnError = throwOnError;
   }
 
-  throw(error: { message: any }, force = true) {
+    throw(error: any): void {
     if (this.throwOnError || force) throw error;
     else logger.error(error.message);
   }

@@ -1,9 +1,17 @@
-const Receipt = require("../documents").receipt;
-const Invoice = require("../documents").invoice;
-const FinancialDocument = require("../documents").financialDocument;
-const fs = require("fs").promises;
+// const Receipt = require("../documents").receipt;
+import { Receipt } from "../documents/receipt";
+// const Invoice = require("../documents").invoice;
+import { Invoice } from "../documents/invoice";
+// const FinancialDocument = require("../documents").financialDocument;
+import { FinancialDocument } from "../documents/financialDocument";
+// const fs = require("fs").promises;
+import fs from "fs/promises";
 
 class Response {
+  httpResponse: any;
+  documentType: string;
+  input: any;
+
   constructor({
     httpResponse,
     documentType,
@@ -21,11 +29,11 @@ class Response {
     }
   }
 
-  async dump(path) {
+  async dump(path: string) {
     return await fs.writeFile(path, JSON.stringify(Object.entries(this)));
   }
 
-  static async load(path) {
+  static async load(path: string) {
     const file = fs.readFile(path);
     const args = JSON.parse(file);
     return new Response({ reconsctruted: true, ...args });

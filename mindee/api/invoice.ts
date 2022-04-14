@@ -1,8 +1,21 @@
-const APIObject = require("./object");
-const Input = require("../inputs");
+// const APIObject = require("./object");
+import { APIObject } from "./object";
+// const Input = require("../inputs");
+import { Input } from "../inputs";
+
+interface InvoiceParse {
+  input: string;
+  inputType: string;
+  filename: string | undefined;
+  version: string;
+  cutPdf: boolean;
+  includeWords: boolean;
+}
 
 class APIInvoice extends APIObject {
-  constructor(apiToken = undefined) {
+  baseUrl: string;
+
+  constructor(public apiToken: string | undefined = undefined) {
     super(apiToken, "invoice");
     this.baseUrl = `${this.baseUrl}/invoices/`;
   }
@@ -22,7 +35,7 @@ class APIInvoice extends APIObject {
     version = "3",
     cutPdf = true,
     includeWords = false,
-  }) {
+  }: InvoiceParse) {
     super.parse();
     const inputFile = new Input({
       file: input,
@@ -41,8 +54,8 @@ class APIInvoice extends APIObject {
     @param {Document} documentType - Document class in {"Receipt", "Invoice", "Financial_document"}
     @returns {Response}
   */
-  wrapResponse(inputFile, response, documentType) {
-    let result = super.wrapResponse(inputFile, response, documentType);
+  wrapResponse(inputFile: string, response: any, documentType: any) {
+    const result = super.wrapResponse(inputFile, response, documentType);
     result.documentType =
       result.httpResponse.data?.predictions?.[0]?.document_type?.value?.toLowerCase() ||
       result.documentType;
