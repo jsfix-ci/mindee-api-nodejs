@@ -50,12 +50,10 @@ class Input {
   ) {
     // Check if inputType is valid
     if (!this.ALLOWED_INPUT_TYPE.includes(inputType)) {
-      errorHandler.throw(
-        new Error(
+      errorHandler.throw(new Error(
           `The input type is invalid. It should be \
-            ${this.ALLOWED_INPUT_TYPE.toString()}`
-        )
-      );
+          ${this.ALLOWED_INPUT_TYPE.toString()}`
+      ));
     }
     this.file = file;
     this.filename = filename;
@@ -98,8 +96,7 @@ class Input {
     // Check if file type is valid
     const filetype = this.filename.split(".").pop();
     if (!(filetype in this.MIMETYPES)) {
-      errorHandler.throw(
-        new Error(
+      errorHandler.throw(new Error(
           `File type is not allowed. It must be ${Object.keys(
             this.MIMETYPES
           ).toString()}`

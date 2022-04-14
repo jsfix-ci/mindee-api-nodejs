@@ -1,8 +1,21 @@
-const APIObject = require("./object");
-const Input = require("../inputs");
+// const APIObject = require("./object");
+import { APIObject } from "./object";
+// const Input = require("../inputs");
+import { Input } from "../inputs";
+
+interface FinancialDocumentParse {
+  input: string;
+  inputType: string;
+  filename: string | undefined;
+  version: string;
+  cutPdf: boolean;
+  includeWords: boolean;
+}
 
 class APIFinancialDocument extends APIObject {
-  constructor(invoiceToken, receiptToken) {
+  apiToken: string | undefined;
+
+  constructor(public invoiceToken: string, public receiptToken: string) {
     super(undefined, "financialDocument");
     this.invoiceToken = invoiceToken;
     this.receiptToken = receiptToken;
@@ -23,7 +36,7 @@ class APIFinancialDocument extends APIObject {
     version = "3",
     cutPdf = true,
     includeWords = false,
-  }) {
+  }: FinancialDocumentParse) {
     const inputFile = new Input({
       file: input,
       inputType: inputType,

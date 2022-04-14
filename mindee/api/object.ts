@@ -11,11 +11,12 @@ import { request } from "./request";
  *  @param {String} apiName - Name of the API used for parsing document
  */
 class APIObject {
-  apiToken: string | undefined;
   baseUrl: string;
-  apiName: string;
 
-  constructor(apiToken = undefined, apiName = "") {
+  constructor(
+    public apiToken: string | undefined = undefined,
+    public apiName = ""
+  ) {
     this.apiToken = apiToken;
     this.baseUrl = "https://api.mindee.net/v1/products/mindee";
     this.apiName = apiName;
@@ -60,14 +61,13 @@ class APIObject {
     @param {Document} documentType - Document class in {"Receipt", "Invoice", "Financial_document"}
     @returns {Response}
   */
-  wrapResponse(inputFile: any, response: any, documentType: any) {
+  wrapResponse(inputFile: string, response: any, documentType: any) {
     if (response.statusCode > 201) {
       const errorMessage = JSON.stringify(response.data, null, 4);
       errorHandler.throw(
         new Error(
           `${this.apiName} API ${response.statusCode} HTTP error: ${errorMessage}`
-        ),
-        false
+        )
       );
       return new Response({
         httpResponse: response,
