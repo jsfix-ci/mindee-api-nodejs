@@ -1,6 +1,9 @@
-const Response = require("./response");
-const errorHandler = require("../errors/handler");
-const request = require("./request");
+// const Response = require("./response");
+import { Response } from "./response";
+// const errorHandler = require("../errors/handler");
+import { errorHandler } from "../errors/handler";
+// const request = require("./request");
+import { request } from "./request";
 
 /**
  * Base class for APIs (APIReceipt & APIInvoice)
@@ -8,6 +11,10 @@ const request = require("./request");
  *  @param {String} apiName - Name of the API used for parsing document
  */
 class APIObject {
+  apiToken: string | undefined;
+  baseUrl: string;
+  apiName: string;
+
   constructor(apiToken = undefined, apiName = "") {
     this.apiToken = apiToken;
     this.baseUrl = "https://api.mindee.net/v1/products/mindee";
@@ -33,7 +40,7 @@ class APIObject {
     @param {Boolean} includeWords - Include Mindee vision words in Response
     @returns {Response}
   */
-  async _request(url, inputFile, includeWords = false) {
+  async _request(url: string, inputFile: any, includeWords = false) {
     const headers = {
       "X-Inferuser-Token": this.apiToken,
     };
@@ -53,7 +60,7 @@ class APIObject {
     @param {Document} documentType - Document class in {"Receipt", "Invoice", "Financial_document"}
     @returns {Response}
   */
-  wrapResponse(inputFile, response, documentType) {
+  wrapResponse(inputFile: any, response: any, documentType: any) {
     if (response.statusCode > 201) {
       const errorMessage = JSON.stringify(response.data, null, 4);
       errorHandler.throw(
