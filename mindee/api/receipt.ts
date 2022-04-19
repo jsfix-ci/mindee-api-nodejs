@@ -1,8 +1,21 @@
-const APIObject = require("./object");
-const Input = require("../inputs");
+// const APIObject = require("./object");
+import { APIObject } from "./object";
+// const Input = require("../inputs");
+import { Input } from "../inputs";
+
+interface ReceiptParse {
+  input: string;
+  inputType: string;
+  filename: string | undefined;
+  version: string;
+  cutPdf: boolean;
+  includeWords: boolean;
+}
 
 class APIReceipt extends APIObject {
-  constructor(apiToken = undefined) {
+  baseUrl: string;
+
+  constructor(public apiToken: string | undefined = undefined) {
     super(apiToken, "receipt");
     this.baseUrl = `${this.baseUrl}/expense_receipts/`;
   }
@@ -22,7 +35,7 @@ class APIReceipt extends APIObject {
     version = "3",
     cutPdf = true,
     includeWords = false,
-  }) {
+  }: ReceiptParse) {
     super.parse();
     const inputFile = new Input({
       file: input,

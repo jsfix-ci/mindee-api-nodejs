@@ -8,7 +8,11 @@
 // const ArrayBufferEncode = require("base64-arraybuffer");
 import fs from "fs/promises";
 import * as path from "path";
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 import * as concat from "concat-stream";
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 import * as Base64Encode from "base64-stream";
 import * as fileType from "file-type";
 import * as ArrayBufferEncode from "base64-arraybuffer";
@@ -46,12 +50,10 @@ class Input {
   ) {
     // Check if inputType is valid
     if (!this.ALLOWED_INPUT_TYPE.includes(inputType)) {
-      errorHandler.throw(
-        new Error(
+      errorHandler.throw(new Error(
           `The input type is invalid. It should be \
-            ${this.ALLOWED_INPUT_TYPE.toString()}`
-        )
-      );
+          ${this.ALLOWED_INPUT_TYPE.toString()}`
+      ));
     }
     this.file = file;
     this.filename = filename;
@@ -94,8 +96,7 @@ class Input {
     // Check if file type is valid
     const filetype = this.filename.split(".").pop();
     if (!(filetype in this.MIMETYPES)) {
-      errorHandler.throw(
-        new Error(
+      errorHandler.throw(new Error(
           `File type is not allowed. It must be ${Object.keys(
             this.MIMETYPES
           ).toString()}`
@@ -130,18 +131,18 @@ class Input {
    * @param {*} stream ReadableStream to encode
    * @returns Base64 encoded String
    */
-  async streamToBase64(stream) {
+  async streamToBase64(stream: any) {
     return new Promise((resolve, reject) => {
       const base64 = new Base64Encode();
 
-      const cbConcat = (base64) => {
+      const cbConcat = (base64: Base64Encode) => {
         resolve(base64);
       };
 
       stream
         .pipe(base64)
         .pipe(concat(cbConcat))
-        .on("error", (error) => {
+        .on("error", (error: any) => {
           reject(error);
         });
     });
@@ -150,7 +151,7 @@ class Input {
   /** Cut PDF if pages > 5 */
   async cutPdf() {
     // convert document to PDFDocument & cut CUT_PDF_SIZE - 1 first pages and last page
-    let pdfDocument = await PDFDocument.load(this.fileObject, {
+    const pdfDocument = await PDFDocument.load(this.fileObject, {
       ignoreEncryption: true,
     });
     const splitedPdfDocument = await PDFDocument.create();
