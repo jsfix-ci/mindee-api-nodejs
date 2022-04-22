@@ -1,4 +1,10 @@
+// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'Field'.
 class Field {
+  bbox: any;
+  pageNumber: any;
+  probability: any;
+  reconstructed: any;
+  value: any;
   /**
    * @param {Object} prediction - Prediction object from HTTP response
    * @param {String} valueKey - Key to use in the prediction dict
@@ -12,7 +18,7 @@ class Field {
     reconstructed = false,
     extraFields,
     pageNumber,
-  }) {
+  }: any) {
     this.pageNumber = pageNumber;
     this.reconstructed = reconstructed;
     this.value = undefined;
@@ -22,13 +28,14 @@ class Field {
       this.value = prediction[valueKey];
       if (extraFields) {
         for (const fieldName of extraFields) {
+          // @ts-expect-error ts-migrate(7053) FIXME: Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
           this[fieldName] = prediction[fieldName];
         }
       }
     }
   }
 
-  compare(other) {
+  compare(other: any) {
     if (this.value == null && other.value == null) return true;
     else if (this.value == null || other.value == null) return false;
     else {
@@ -46,9 +53,9 @@ class Field {
   @param {String} attr - Attribute to compare
   @returns {Boolean} - true if all elements in array1 exist in array2 and vice-versa, false otherwise
    */
-  static compareArrays(array1, array2, attr = "value") {
-    const list1 = array1.map((item) => item[attr]);
-    const list2 = array2.map((item) => item[attr]);
+  static compareArrays(array1: any, array2: any, attr = "value") {
+    const list1 = array1.map((item: any) => item[attr]);
+    const list2 = array2.map((item: any) => item[attr]);
     if (list1.length !== list2.length) return false;
     for (const item1 of list1) {
       if (!list2.includes(item1)) return false;
@@ -60,7 +67,7 @@ class Field {
    * @param {Array<Field>} array - Array of Fields
    * @returns {Number} product of all the fields probaility
    */
-  static arrayProbability(array) {
+  static arrayProbability(array: any) {
     let total = 1.0;
     for (const field of array) {
       total *= field.probability;
@@ -73,7 +80,7 @@ class Field {
    * @param {Array<Field>} array - Array of Fields
    * @returns {Number} Sum of all the Fields values in the array
    */
-  static arraySum(array) {
+  static arraySum(array: any) {
     let total = 0;
     for (const field of array) {
       total += field.value;

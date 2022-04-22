@@ -1,3 +1,4 @@
+// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'Field'.
 const Field = require("./field");
 
 class DateField extends Field {
@@ -12,7 +13,7 @@ class DateField extends Field {
     valueKey = "iso",
     reconstructed = false,
     pageNumber = 0,
-  }) {
+  }: any) {
     super({ prediction, valueKey, reconstructed, pageNumber });
     this.dateObject = new Date(this.value);
     if (

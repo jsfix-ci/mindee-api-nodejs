@@ -1,11 +1,20 @@
+// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'Document'.
 const Document = require("./document");
+// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'Invoice'.
 const Invoice = require("./invoice");
+// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'Receipt'.
 const Receipt = require("./receipt");
+// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'Field'.
 const Field = require("./fields").field;
+// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'Date'.
 const Date = require("./fields").date;
+// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'Amount'.
 const Amount = require("./fields").amount;
+// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'Locale'.
 const Locale = require("./fields").locale;
+// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'Orientatio... Remove this comment to see the full error message
 const Orientation = require("./fields").orientation;
+// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'Tax'.
 const Tax = require("./fields").tax;
 
 class FinancialDocument extends Document {
@@ -88,6 +97,7 @@ class FinancialDocument extends Document {
     this.#checklist();
   }
 
+  // @ts-expect-error ts-migrate(18022) FIXME: A method cannot be named with a private identifier... Remove this comment to see the full error message
   #initFromScratch({
     locale,
     totalIncl,
@@ -108,15 +118,17 @@ class FinancialDocument extends Document {
     customerName,
     customerAddress,
     customerCompanyRegistration,
-  }) {
-    const constructPrediction = function (item) {
+  }: any) {
+    const constructPrediction = function (item: any) {
       return { prediction: { value: item }, valueKey: "value", pageNumber };
     };
     this.locale = new Locale(constructPrediction(locale));
     this.totalIncl = new Amount(constructPrediction(totalIncl));
     this.totalExcl = new Amount(constructPrediction(totalExcl));
     this.totalTax = new Amount(constructPrediction(totalTax));
+    // @ts-expect-error ts-migrate(2769) FIXME: No overload matches this call.
     this.date = new Date(constructPrediction(date));
+    // @ts-expect-error ts-migrate(2769) FIXME: No overload matches this call.
     this.dueDate = new Date(constructPrediction(dueDate));
     this.supplier = new Field(constructPrediction(supplier));
     this.supplierAddress = new Field(this.constructPrediction(supplierAddress));
@@ -146,7 +158,13 @@ class FinancialDocument extends Document {
     }
   }
 
-  #initFromApiPrediction(apiPrediction, inputFile, pageNumber, words) {
+  // @ts-expect-error ts-migrate(18022) FIXME: A method cannot be named with a private identifier... Remove this comment to see the full error message
+  #initFromApiPrediction(
+    apiPrediction: any,
+    inputFile: any,
+    pageNumber: any,
+    words: any
+  ) {
     if (Object.keys(apiPrediction).includes("invoice_number")) {
       const invoice = new Invoice({
         apiPrediction,
@@ -227,12 +245,14 @@ class FinancialDocument extends Document {
     `;
   }
 
+  // @ts-expect-error ts-migrate(18022) FIXME: A method cannot be named with a private identifier... Remove this comment to see the full error message
   #checklist() {
     this.checklist = {
       taxesMatchTotalIncl: this.#taxesMatchTotalIncl(),
     };
   }
 
+  // @ts-expect-error ts-migrate(18022) FIXME: A method cannot be named with a private identifier... Remove this comment to see the full error message
   #taxesMatchTotalIncl() {
     // Check taxes and total include exist
     if (this.taxes.length === 0 || this.totalIncl.value === undefined)
@@ -241,7 +261,7 @@ class FinancialDocument extends Document {
     // Reconstruct totalIncl from taxes
     let totalVat = 0;
     let reconstructedTotal = 0;
-    this.taxes.forEach((tax) => {
+    this.taxes.forEach((tax: any) => {
       if (tax.value === undefined || !tax.rate) return false;
       totalVat += tax.value;
       reconstructedTotal += tax.value + (100 * tax.value) / tax.rate;
@@ -257,7 +277,10 @@ class FinancialDocument extends Document {
       this.totalIncl.value * (1 - eps) - 0.02 <= reconstructedTotal &&
       reconstructedTotal <= this.totalIncl.value * (1 + eps) + 0.02
     ) {
-      this.taxes = this.taxes.map((tax) => ({ ...tax, confidence: 1.0 }));
+      this.taxes = this.taxes.map((tax: any) => ({
+        ...tax,
+        confidence: 1.0,
+      }));
       this.totalTax.probability = 1.0;
       this.totalIncl.probability = 1.0;
       return true;

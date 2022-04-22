@@ -1,5 +1,7 @@
+// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'Field'.
 const Field = require("./field");
 
+// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'Tax'.
 class Tax extends Field {
   /**
    * @param {Object} prediction - Prediction object from HTTP response
@@ -16,7 +18,7 @@ class Tax extends Field {
     codeKey = "code",
     reconstructed = false,
     pageNumber = 0,
-  }) {
+  }: any) {
     super({ prediction, valueKey, reconstructed, pageNumber });
 
     this.rate = parseFloat(prediction[rateKey]);
@@ -35,6 +37,7 @@ class Tax extends Field {
   toString() {
     let str = "";
     const keys = ["value", "rate", "code"];
+    // @ts-expect-error ts-migrate(2569) FIXME: Type 'IterableIterator<[number, string]>' is not a... Remove this comment to see the full error message
     for (const [i, key] of keys.entries()) {
       const value = this[key] === undefined ? "_" : this[key].toString();
       if (i < keys.length - 1) str += `${value}${key === "rate" ? "%" : ""}; `;
