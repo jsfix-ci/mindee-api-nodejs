@@ -1,12 +1,21 @@
+// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'Document'.
 const Document = require("./document");
+// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'Field'.
 const Field = require("./fields").field;
+// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'Date'.
 const Date = require("./fields").date;
+// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'Amount'.
 const Amount = require("./fields").amount;
+// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'Locale'.
 const Locale = require("./fields").locale;
+// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'Orientatio... Remove this comment to see the full error message
 const Orientation = require("./fields").orientation;
+// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'Tax'.
 const Tax = require("./fields").tax;
+// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'fs'.
 const fs = require("fs").promises;
 
+// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'Receipt'.
 class Receipt extends Document {
   /**
    *  @param {Object} apiPrediction - Json parsed prediction from HTTP response
@@ -43,7 +52,7 @@ class Receipt extends Document {
   }) {
     super(inputFile);
     this.level = level;
-    this.constructPrediction = function (item) {
+    this.constructPrediction = function (item: any) {
       return { prediction: { value: item }, valueKey: "value", pageNumber };
     };
     if (apiPrediction === undefined) {
@@ -67,6 +76,7 @@ class Receipt extends Document {
     this.#reconstruct();
   }
 
+  // @ts-expect-error ts-migrate(18022) FIXME: A method cannot be named with a private identifier... Remove this comment to see the full error message
   #initFromScratch({
     locale,
     totalExcl,
@@ -79,7 +89,7 @@ class Receipt extends Document {
     orientation,
     totalTax,
     pageNumber,
-  }) {
+  }: any) {
     this.locale = new Locale(this.constructPrediction(locale));
     this.totalIncl = new Amount(this.constructPrediction(totalIncl));
     this.date = new Date(this.constructPrediction(date));
@@ -109,13 +119,15 @@ class Receipt extends Document {
     @param apiPrediction: Raw prediction from HTTP response
     @param pageNumber: Page number for multi pages pdf input
    */
-  #initFromApiPrediction(apiPrediction, pageNumber, words) {
+  // @ts-expect-error ts-migrate(18022) FIXME: A method cannot be named with a private identifier... Remove this comment to see the full error message
+  #initFromApiPrediction(apiPrediction: any, pageNumber: any, words: any) {
     this.locale = new Locale({ prediction: apiPrediction.locale, pageNumber });
     this.totalIncl = new Amount({
       prediction: apiPrediction.total_incl,
       valueKey: "value",
       pageNumber,
     });
+    // @ts-expect-error ts-migrate(2769) FIXME: No overload matches this call.
     this.date = new Date({
       prediction: apiPrediction.date,
       valueKey: "value",
@@ -136,7 +148,7 @@ class Receipt extends Document {
       pageNumber,
     });
     this.taxes = apiPrediction.taxes.map(
-      (taxPrediction) =>
+      (taxPrediction: any) =>
         new Tax({
           prediction: taxPrediction,
           pageNumber,
@@ -183,12 +195,12 @@ class Receipt extends Document {
     Category: ${this.category.value}
     Time: ${this.time.value}
     Merchant name: ${this.merchantName.value}
-    Taxes: ${this.taxes.map((tax) => tax.toString()).join(" - ")}
+    Taxes: ${this.taxes.map((tax: any) => tax.toString()).join(" - ")}
     Total taxes: ${this.totalTax.value}
     `;
   }
 
-  static async load(path) {
+  static async load(path: any) {
     const file = fs.readFile(path);
     const args = JSON.parse(file);
     return new Receipt({ reconsctruted: true, ...args });
@@ -197,10 +209,12 @@ class Receipt extends Document {
   /**
    * Call all check methods
    */
+  // @ts-expect-error ts-migrate(18022) FIXME: A method cannot be named with a private identifier... Remove this comment to see the full error message
   #checklist() {
     this.checklist = { taxesMatchTotalIncl: this.#taxesMatchTotal() };
   }
 
+  // @ts-expect-error ts-migrate(18022) FIXME: A method cannot be named with a private identifier... Remove this comment to see the full error message
   #taxesMatchTotal() {
     // Check taxes and total amount exist
 
@@ -209,7 +223,7 @@ class Receipt extends Document {
     // Reconstruct total_incl from taxes
     let totalVat = 0;
     let reconstructedTotal = 0;
-    this.taxes.forEach((tax) => {
+    this.taxes.forEach((tax: any) => {
       if (tax.value == null || !tax.rate) return false;
       totalVat += tax.value;
       reconstructedTotal += tax.value + (100 * tax.value) / tax.rate;
@@ -225,7 +239,10 @@ class Receipt extends Document {
       this.totalIncl.value * (1 - eps) - 0.02 <= reconstructedTotal &&
       reconstructedTotal <= this.totalIncl.value * (1 + eps) + 0.02
     ) {
-      this.taxes = this.taxes.map((tax) => ({ ...tax, probability: 1.0 }));
+      this.taxes = this.taxes.map((tax: any) => ({
+        ...tax,
+        probability: 1.0,
+      }));
       this.totalTax.probability = 1.0;
       this.totalIncl.probability = 1.0;
       return true;
@@ -236,6 +253,7 @@ class Receipt extends Document {
   /**
    * Call all fields that need to be reconstructed
    */
+  // @ts-expect-error ts-migrate(18022) FIXME: A method cannot be named with a private identifier... Remove this comment to see the full error message
   #reconstruct() {
     this.#reconstructTotalExclFromTCCAndTaxes();
     this.#reconstructTotalTax();
@@ -246,6 +264,7 @@ class Receipt extends Document {
    * The totalExcl Amount value is the difference between totalIncl and sum of taxes
    * The totalExcl Amount probability is the product of this.taxes probabilities multiplied by totalIncl probability
    */
+  // @ts-expect-error ts-migrate(18022) FIXME: A method cannot be named with a private identifier... Remove this comment to see the full error message
   #reconstructTotalExclFromTCCAndTaxes() {
     if (this.taxes.length && this.totalIncl.value != null) {
       const totalExcl = {
@@ -266,12 +285,13 @@ class Receipt extends Document {
    * The totalTax Amount value is the sum of all this.taxes value
    * The totalTax Amount probability is the product of this.taxes probabilities
    */
+  // @ts-expect-error ts-migrate(18022) FIXME: A method cannot be named with a private identifier... Remove this comment to see the full error message
   #reconstructTotalTax() {
     if (this.taxes.length && this.totalTax.value == null) {
       const totalTax = {
         value: this.taxes
-          .map((tax) => tax.value || 0)
-          .reduce((a, b) => a + b, 0),
+          .map((tax: any) => tax.value || 0)
+          .reduce((a: any, b: any) => a + b, 0),
         confidence: Field.arrayProbability(this.taxes),
       };
       if (totalTax.value > 0)

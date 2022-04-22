@@ -1,7 +1,7 @@
 import { logger } from "../logger";
 
 interface ErrorHandlerInterface {
-    throw(error: any): void;
+  throw(error: any): void;
 }
 
 class ErrorHandler implements ErrorHandlerInterface {
@@ -9,7 +9,8 @@ class ErrorHandler implements ErrorHandlerInterface {
     this.throwOnError = throwOnError;
   }
 
-    throw(error: any): void {
+  throw(error: any): void {
+    // @ts-expect-error ts-migrate(2304) FIXME: Cannot find name 'force'.
     if (this.throwOnError || force) throw error;
     else logger.error(error.message);
   }
