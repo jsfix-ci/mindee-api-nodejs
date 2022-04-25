@@ -10,7 +10,6 @@ class ErrorHandler implements ErrorHandlerInterface {
   }
 
   throw(error: any): void {
-    // @ts-expect-error ts-migrate(2304) FIXME: Cannot find name 'force'.
     if (this.throwOnError || force) throw error;
     else logger.error(error.message);
   }

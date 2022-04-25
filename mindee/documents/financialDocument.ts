@@ -1,23 +1,16 @@
-// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'Document'.
-const Document = require("./document");
-// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'Invoice'.
-const Invoice = require("./invoice");
-// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'Receipt'.
-const Receipt = require("./receipt");
-// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'Field'.
-const Field = require("./fields").field;
-// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'Date'.
-const Date = require("./fields").date;
-// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'Amount'.
-const Amount = require("./fields").amount;
-// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'Locale'.
-const Locale = require("./fields").locale;
-// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'Orientatio... Remove this comment to see the full error message
-const Orientation = require("./fields").orientation;
-// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'Tax'.
-const Tax = require("./fields").tax;
+import { Document } from "./document";
+import { Invoice } from "./invoice";
+import { Receipt } from "./receipt";
+import {
+  Tax,
+  Field,
+  Amount,
+  Locale,
+  Orientation,
+  DateField as Date,
+} from "./fields";
 
-class FinancialDocument extends Document {
+export class FinancialDocument extends Document {
   /**
    *  @param {Object} apiPrediction - Json parsed prediction from HTTP response
    *  @param {Input} input - Input object
@@ -97,7 +90,7 @@ class FinancialDocument extends Document {
     this.#checklist();
   }
 
-  // @ts-expect-error ts-migrate(18022) FIXME: A method cannot be named with a private identifier... Remove this comment to see the full error message
+  
   #initFromScratch({
     locale,
     totalIncl,
@@ -126,9 +119,7 @@ class FinancialDocument extends Document {
     this.totalIncl = new Amount(constructPrediction(totalIncl));
     this.totalExcl = new Amount(constructPrediction(totalExcl));
     this.totalTax = new Amount(constructPrediction(totalTax));
-    // @ts-expect-error ts-migrate(2769) FIXME: No overload matches this call.
     this.date = new Date(constructPrediction(date));
-    // @ts-expect-error ts-migrate(2769) FIXME: No overload matches this call.
     this.dueDate = new Date(constructPrediction(dueDate));
     this.supplier = new Field(constructPrediction(supplier));
     this.supplierAddress = new Field(this.constructPrediction(supplierAddress));
@@ -158,7 +149,7 @@ class FinancialDocument extends Document {
     }
   }
 
-  // @ts-expect-error ts-migrate(18022) FIXME: A method cannot be named with a private identifier... Remove this comment to see the full error message
+  
   #initFromApiPrediction(
     apiPrediction: any,
     inputFile: any,
@@ -245,14 +236,14 @@ class FinancialDocument extends Document {
     `;
   }
 
-  // @ts-expect-error ts-migrate(18022) FIXME: A method cannot be named with a private identifier... Remove this comment to see the full error message
+  
   #checklist() {
     this.checklist = {
       taxesMatchTotalIncl: this.#taxesMatchTotalIncl(),
     };
   }
 
-  // @ts-expect-error ts-migrate(18022) FIXME: A method cannot be named with a private identifier... Remove this comment to see the full error message
+  
   #taxesMatchTotalIncl() {
     // Check taxes and total include exist
     if (this.taxes.length === 0 || this.totalIncl.value === undefined)
@@ -288,5 +279,3 @@ class FinancialDocument extends Document {
     return false;
   }
 }
-
-module.exports = FinancialDocument;

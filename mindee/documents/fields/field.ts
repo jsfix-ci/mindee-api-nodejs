@@ -1,5 +1,4 @@
-// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'Field'.
-class Field {
+export class Field {
   bbox: any;
   pageNumber: any;
   probability: any;
@@ -28,8 +27,7 @@ class Field {
       this.value = prediction[valueKey];
       if (extraFields) {
         for (const fieldName of extraFields) {
-          // @ts-expect-error ts-migrate(7053) FIXME: Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
-          this[fieldName] = prediction[fieldName];
+            this[fieldName] = prediction[fieldName];
         }
       }
     }
@@ -89,5 +87,3 @@ class Field {
     return total;
   }
 }
-
-module.exports = Field;

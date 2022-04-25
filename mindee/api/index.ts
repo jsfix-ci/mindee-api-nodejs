@@ -1,5 +1,5 @@
-exports.APIObject = require("./object");
-exports.APIReceipt = require("./receipt");
-exports.Response = require("./response");
-exports.Request = require("./response");
-exports.Invoice = require("./invoice");
+export { APIObject } from "./object";
+export { APIReceipt } from "./receipt";
+export { Response } from "./response";
+export { request } from "./request";
+export { APIInvoice } from "./invoice";
