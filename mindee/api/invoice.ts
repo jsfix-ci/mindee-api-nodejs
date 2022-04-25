@@ -1,11 +1,7 @@
-// const APIObject = require("./object");
-// @ts-expect-error ts-migrate(2459) FIXME: Module '"./object"' declares 'APIObject' locally, ... Remove this comment to see the full error message
 import { APIObject } from "./object";
-// const Input = require("../inputs");
-// @ts-expect-error ts-migrate(2459) FIXME: Module '"../inputs"' declares 'Input' locally, but... Remove this comment to see the full error message
 import { Input } from "../inputs";
 
-interface InvoiceParse {
+interface InvoiceParseProps {
   input: string;
   inputType: string;
   filename: string | undefined;
@@ -14,12 +10,13 @@ interface InvoiceParse {
   includeWords: boolean;
 }
 
-class APIInvoice extends APIObject {
+export class APIInvoice extends APIObject {
   baseUrl: string;
 
   constructor(public apiToken: string | undefined = undefined) {
     super(apiToken, "invoice");
-    // @ts-expect-error ts-migrate(2565) FIXME: Property 'baseUrl' is used before being assigned.
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore TO DO : FIX
     this.baseUrl = `${this.baseUrl}/invoices/`;
   }
 
@@ -38,14 +35,9 @@ class APIInvoice extends APIObject {
     version = "3",
     cutPdf = true,
     includeWords = false,
-  }: InvoiceParse) {
+  }: InvoiceParseProps) {
     super.parse();
-    const inputFile = new Input({
-      file: input,
-      inputType: inputType,
-      filename: filename,
-      allowCutPdf: cutPdf,
-    });
+    const inputFile = new Input(input, inputType, cutPdf, filename);
     await inputFile.init();
     const url = `v${version}/predict`;
     return await super._request(url, inputFile, includeWords);
@@ -65,5 +57,3 @@ class APIInvoice extends APIObject {
     return result;
   }
 }
-
-module.exports = APIInvoice;

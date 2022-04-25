@@ -1,16 +1,9 @@
-// const Receipt = require("../documents").receipt;
-// @ts-expect-error ts-migrate(2306) FIXME: File '/Users/yanism/Documents/mindee/mindee-api-no... Remove this comment to see the full error message
 import { Receipt } from "../documents/receipt";
-// const Invoice = require("../documents").invoice;
-// @ts-expect-error ts-migrate(2306) FIXME: File '/Users/yanism/Documents/mindee/mindee-api-no... Remove this comment to see the full error message
 import { Invoice } from "../documents/invoice";
-// const FinancialDocument = require("../documents").financialDocument;
-// @ts-expect-error ts-migrate(2306) FIXME: File '/Users/yanism/Documents/mindee/mindee-api-no... Remove this comment to see the full error message
 import { FinancialDocument } from "../documents/financialDocument";
-// const fs = require("fs").promises;
 import fs from "fs/promises";
 
-class Response {
+export class Response {
   httpResponse: any;
   documentType: string;
   input: any;
@@ -38,7 +31,6 @@ class Response {
 
   static async load(path: string) {
     const file = fs.readFile(path);
-    // @ts-expect-error ts-migrate(2345) FIXME: Argument of type 'Promise<Buffer>' is not assignab... Remove this comment to see the full error message
     const args = JSON.parse(file);
     return new Response({ reconsctruted: true, ...args });
   }
@@ -52,7 +44,6 @@ class Response {
     };
 
     const predictions = http_data_document.inference.pages.entries();
-    // @ts-expect-error ts-migrate(7053) FIXME: Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
     this[`${this.documentType}s`] = [];
     const document_words_content = [];
 
@@ -69,9 +60,7 @@ class Response {
           ...http_data_document.ocr["mvision-v1"].pages[pageNumber].all_words
         );
       }
-      // @ts-expect-error ts-migrate(7053) FIXME: Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
-      this[`${this.documentType}s`].push(
-        // @ts-expect-error ts-migrate(7053) FIXME: Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
+        this[`${this.documentType}s`].push(
         constructors[this.documentType]({
           apiPrediction: prediction.prediction,
           inputFile: this.input,
@@ -82,7 +71,6 @@ class Response {
     }
 
     // Merge the list of Document into a unique Document
-    // @ts-expect-error ts-migrate(7053) FIXME: Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
     this[this.documentType] = constructors[this.documentType]({
       apiPrediction: http_data_document.inference.prediction,
       inputFile: this.input,
@@ -92,5 +80,3 @@ class Response {
     });
   }
 }
-
-module.exports = Response;

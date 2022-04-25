@@ -1,8 +1,7 @@
-// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'Field'.
-const Field = require("./field");
+import { Field } from "./field";
 
-// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'Amount'.
-class Amount extends Field {
+
+export class Amount extends Field {
   /**
    * @param {Object} prediction - Prediction object from HTTP response
    * @param {String} valueKey - Key to use in the prediction dict
@@ -23,5 +22,3 @@ class Amount extends Field {
     }
   }
 }
-
-module.exports = Amount;

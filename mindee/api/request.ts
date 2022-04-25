@@ -1,11 +1,13 @@
-const https = require("https");
-const { version: sdkVersion } = require("../../package.json");
-// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'URL'.
-const { URL } = require("url");
-const FormData = require("form-data");
-const os = require("os");
+import * as https from "https";
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import { version as sdkVersion } from "../../package.json";
 
-const request = (
+import { URL } from "url";
+import FormData from "form-data";
+import * as os from "os";
+
+export const request = (
   url: any,
   method: any,
   headers: any,
@@ -25,8 +27,7 @@ const request = (
       if (includeWords) form.append("include_mvision", "true");
       headers = { ...headers, ...form.getHeaders() };
     } else if (input.inputType === "base64") {
-      const body_obj = { document: input.fileObject };
-      // @ts-expect-error ts-migrate(7053) FIXME: Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
+      const body_obj: any = { document: input.fileObject };
       if (includeWords) body_obj["include_mvision"] = "true";
       body = JSON.stringify(body_obj);
       headers["Content-Type"] = "application/json";
@@ -74,5 +75,3 @@ const request = (
     }
   });
 };
-
-module.exports = request;

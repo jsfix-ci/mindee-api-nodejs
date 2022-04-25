@@ -1,7 +1,7 @@
-exports.field = require("./field");
-exports.date = require("./date");
-exports.amount = require("./amount");
-exports.locale = require("./locale");
-exports.orientation = require("./orientation");
-exports.paymentDetails = require("./paymentDetails");
-exports.tax = require("./tax.js");
+export { Tax } from "./tax";
+export { PaymentDetails } from "./paymentDetails";
+export { Orientation } from "./orientation";
+export { Locale } from "./locale";
+export { Amount } from "./amount";
+export { DateField } from "./date";
+export { Field } from "./field";

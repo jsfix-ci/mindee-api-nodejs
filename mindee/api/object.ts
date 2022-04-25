@@ -1,10 +1,5 @@
-// const Response = require("./response");
-// @ts-expect-error ts-migrate(2459) FIXME: Module '"./response"' declares 'Response' locally,... Remove this comment to see the full error message
 import { Response } from "./response";
-// const errorHandler = require("../errors/handler");
 import { errorHandler } from "../errors/handler";
-// const request = require("./request");
-// @ts-expect-error ts-migrate(2306) FIXME: File '/Users/yanism/Documents/mindee/mindee-api-no... Remove this comment to see the full error message
 import { request } from "./request";
 
 /**
@@ -12,7 +7,7 @@ import { request } from "./request";
  *  @param {String} apiToken - Token of the API used for parsing document
  *  @param {String} apiName - Name of the API used for parsing document
  */
-class APIObject {
+export class APIObject {
   baseUrl: string;
 
   constructor(
@@ -87,5 +82,3 @@ class APIObject {
     });
   }
 }
-
-module.exports = APIObject;

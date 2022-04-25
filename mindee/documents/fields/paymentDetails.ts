@@ -1,8 +1,6 @@
-// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'Field'.
-const Field = require("./field");
+import { Field } from "./field";
 
-// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'PaymentDet... Remove this comment to see the full error message
-class PaymentDetails extends Field {
+export class PaymentDetails extends Field {
   /**
    * @param {Object} prediction - Prediction object from HTTP response
    * @param {String} valueKey - Key to use in the prediction dict to get the iban
@@ -36,7 +34,7 @@ class PaymentDetails extends Field {
     this.#setKey(prediction[swiftKey], "swift");
   }
 
-  // @ts-expect-error ts-migrate(18022) FIXME: A method cannot be named with a private identifier... Remove this comment to see the full error message
+  
   #setKey(value: any, key: any) {
     if (typeof value === "string" && value !== "N/A") this[key] = value;
     else this[key] = undefined;
@@ -51,5 +49,3 @@ class PaymentDetails extends Field {
     return str;
   }
 }
-
-module.exports = PaymentDetails;

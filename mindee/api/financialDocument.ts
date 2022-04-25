@@ -1,11 +1,7 @@
-// const APIObject = require("./object");
-// @ts-expect-error ts-migrate(2459) FIXME: Module '"./object"' declares 'APIObject' locally, ... Remove this comment to see the full error message
 import { APIObject } from "./object";
-// const Input = require("../inputs");
-// @ts-expect-error ts-migrate(2459) FIXME: Module '"../inputs"' declares 'Input' locally, but... Remove this comment to see the full error message
 import { Input } from "../inputs";
 
-interface FinancialDocumentParse {
+interface FinancialDocumentParseProps {
   input: string;
   inputType: string;
   filename: string | undefined;
@@ -14,7 +10,7 @@ interface FinancialDocumentParse {
   includeWords: boolean;
 }
 
-class APIFinancialDocument extends APIObject {
+export class APIFinancialDocument extends APIObject {
   apiToken: string | undefined;
 
   constructor(public invoiceToken: string, public receiptToken: string) {
@@ -38,13 +34,8 @@ class APIFinancialDocument extends APIObject {
     version = "3",
     cutPdf = true,
     includeWords = false,
-  }: FinancialDocumentParse) {
-    const inputFile = new Input({
-      file: input,
-      inputType: inputType,
-      filename: filename,
-      allowCutPdf: cutPdf,
-    });
+  }: FinancialDocumentParseProps) {
+    const inputFile = new Input(input, inputType, cutPdf, filename);
     await inputFile.init();
     this.apiToken =
       inputFile.fileExtension === "application/pdf"
@@ -58,5 +49,3 @@ class APIFinancialDocument extends APIObject {
     return super._request(url, inputFile, includeWords);
   }
 }
-
-module.exports = APIFinancialDocument;

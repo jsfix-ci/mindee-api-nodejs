@@ -1,8 +1,6 @@
-// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'fs'.
-const fs = require("fs").promises;
+import fs from "fs/promises";
 
-// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'Document'.
-class Document {
+export class Document {
   checklist: any;
   fileExtension: any;
   filename: any;
@@ -18,12 +16,9 @@ class Document {
     this.fileExtension = undefined;
 
     if (inputFile != undefined) {
-      // @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'.
-      this.filepath = inputFile.filepath;
-      // @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'.
-      this.filename = inputFile.filename;
-      // @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'.
-      this.fileExtension = inputFile.fileExtension;
+        this.filepath = inputFile.filepath;
+        this.filename = inputFile.filename;
+        this.fileExtension = inputFile.fileExtension;
     }
     this.checklist = {};
   }
@@ -74,5 +69,3 @@ class Document {
     return finalDocument;
   }
 }
-
-module.exports = Document;
