@@ -8,19 +8,21 @@
 // const ArrayBufferEncode = require("base64-arraybuffer");
 import fs from "fs/promises";
 import * as path from "path";
-// @ts-expect-error ts-migrate(7016) FIXME: Could not find a declaration file for module 'conc... Remove this comment to see the full error message
+
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 import * as concat from "concat-stream";
-// @ts-expect-error ts-migrate(7016) FIXME: Could not find a declaration file for module 'base... Remove this comment to see the full error message
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-import * as Base64Encode from "base64-stream";
+
+import { Base64Encode } from "base64-stream";
 import * as fileType from "file-type";
 import * as ArrayBufferEncode from "base64-arraybuffer";
 
 import { errorHandler } from "./errors/handler";
 import { PDFDocument } from "pdf-lib";
 
-class Input {
+type MIMETYPES_TYPE = "png" | "jpg" | "jpeg" | "webp" | "pdf";
+
+export class Input {
   MIMETYPES = {
     png: "image/png",
     jpg: "image/jpg",
@@ -30,9 +32,9 @@ class Input {
   };
   ALLOWED_INPUT_TYPE = ["base64", "path", "stream", "dummy"];
   CUT_PDF_SIZE = 5;
-  public fileObject: Buffer | string | undefined;
-  public filepath: Buffer | string | undefined;
-  public fileExtension: string | undefined;
+  public fileObject?: Buffer | string;
+  public filepath?: Buffer | string;
+  public fileExtension?: string;
 
   /**
    * @param {(String | Buffer)} file - the file that will be read. Either path or base64 string, or a steam
@@ -44,9 +46,9 @@ class Input {
    */
   constructor(
     public file: Buffer | string,
-    public filename: string | undefined = undefined,
     public inputType: string,
-    public allowCutPdf: boolean = true
+    public allowCutPdf: boolean = true,
+    public filename?: string
   ) {
     // Check if inputType is valid
     if (!this.ALLOWED_INPUT_TYPE.includes(inputType)) {
@@ -77,8 +79,7 @@ class Input {
 
     if (this.allowCutPdf == true) {
       const typeOfFile = await fileType.fromBuffer(
-        // @ts-expect-error ts-migrate(2769) FIXME: No overload matches this call.
-        Buffer.from(this.fileObject, "base64")
+        Buffer.from(this.fileObject as string, "base64")
       );
 
       if (typeOfFile === undefined) {
@@ -97,10 +98,10 @@ class Input {
     }
 
     // Check if file type is valid
-    // @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'.
-    const filetype = this.filename.split(".").pop();
-    // @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'.
-    if (!(filetype in this.MIMETYPES)) {
+    const filetype: MIMETYPES_TYPE | undefined = this.filename
+      ?.split(".")
+      .pop() as MIMETYPES_TYPE | undefined;
+    if (!filetype || !(filetype in this.MIMETYPES)) {
       errorHandler.throw(
         new Error(
           `File type is not allowed. It must be ${Object.keys(
@@ -109,19 +110,15 @@ class Input {
         )
       );
     }
-    // @ts-expect-error ts-migrate(2538) FIXME: Type 'undefined' cannot be used as an index type.
-    this.fileExtension = this.MIMETYPES[filetype];
+    this.fileExtension = filetype ? this.MIMETYPES[filetype] : "";
 
-    if (this.fileExtension === "application/pdf" && this.allowCutPdf == true) {
+    if (this.fileExtension === "application/pdf" && this.allowCutPdf) {
       await this.cutPdf();
     }
   }
 
   async initStream() {
-    const file = await this.streamToBase64(this.file);
-
-    // @ts-expect-error ts-migrate(2322) FIXME: Type 'unknown' is not assignable to type 'string |... Remove this comment to see the full error message
-    this.file = file;
+    this.file = (await this.streamToBase64(this.file)) as string | Buffer;
     this.inputType = "base64";
     await this.initBase64();
   }
@@ -149,6 +146,8 @@ class Input {
 
       stream
         .pipe(base64)
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore TO DO : FIX
         .pipe(concat(cbConcat))
         .on("error", (error: any) => {
           reject(error);
@@ -159,15 +158,13 @@ class Input {
   /** Cut PDF if pages > 5 */
   async cutPdf() {
     // convert document to PDFDocument & cut CUT_PDF_SIZE - 1 first pages and last page
-    // @ts-expect-error ts-migrate(2345) FIXME: Argument of type 'string | Buffer | undefined' is ... Remove this comment to see the full error message
-    const pdfDocument = await PDFDocument.load(this.fileObject, {
+    const pdfDocument = await PDFDocument.load(this.fileObject as Buffer, {
       ignoreEncryption: true,
     });
     const splitedPdfDocument = await PDFDocument.create();
     const pdfLength = pdfDocument.getPageCount();
     if (pdfLength <= this.CUT_PDF_SIZE) return;
     const pagesNumbers = [
-      // @ts-expect-error ts-migrate(2569) FIXME: Type 'IterableIterator<number>' is not an array ty... Remove this comment to see the full error message
       ...Array(this.CUT_PDF_SIZE - 1).keys(),
       pdfLength - 1,
     ];
@@ -181,5 +178,3 @@ class Input {
     }
   }
 }
-
-module.exports = Input;

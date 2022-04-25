@@ -1,10 +1,10 @@
 import { errorHandler } from "./errors/handler";
 import { logger } from "./logger";
-// @ts-expect-error ts-migrate(2459) FIXME: Module '"./api/receipt"' declares 'APIReceipt' loc... Remove this comment to see the full error message
+
 import { APIReceipt } from "./api/receipt";
-// @ts-expect-error ts-migrate(2459) FIXME: Module '"./api/invoice"' declares 'APIInvoice' loc... Remove this comment to see the full error message
+
 import { APIInvoice } from "./api/invoice";
-// @ts-expect-error ts-migrate(2459) FIXME: Module '"./api/financialDocument"' declares 'APIFi... Remove this comment to see the full error message
+
 import { APIFinancialDocument } from "./api/financialDocument";
 
 interface constructorObject {
@@ -14,7 +14,7 @@ interface constructorObject {
   debug: boolean;
 }
 
-class Client {
+export class Client {
   /**
    * @param {string} receiptToken - Receipt Expense Token from Mindee dashboard
    * @param {string} invoiceToken - Invoice Token from Mindee dashboard
@@ -46,7 +46,6 @@ class Client {
   }
 }
 
-exports.Client = Client;
 exports.documents = require("./documents");
 exports.api = require("./api");
 exports.inputs = require("./inputs");
