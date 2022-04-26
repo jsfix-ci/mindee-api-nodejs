@@ -15,24 +15,27 @@ export const request = (
   includeWords = false
 ) => {
   return new Promise(function (resolve, reject) {
-    const form = new FormData();
-    let body;
+    let form = new FormData();
 
     headers["User-Agent"] = `mindee-api-nodejs@v${sdkVersion} nodejs-${
       process.version
     } ${os.type().toLowerCase()}`;
-    if (["path", "stream"].includes(input.inputType)) {
-      const fileParams = { filename: input.filename };
+
+    const fileParams = { filename: input.filename };
+
+    if (input.inputType === "base64") {
+      form.append(
+        "document",
+        Buffer.from(input.fileObject, "base64"),
+        fileParams
+      );
+    } else {
       form.append("document", input.fileObject, fileParams);
-      if (includeWords) form.append("include_mvision", "true");
-      headers = { ...headers, ...form.getHeaders() };
-    } else if (input.inputType === "base64") {
-      const body_obj: any = { document: input.fileObject };
-      if (includeWords) body_obj["include_mvision"] = "true";
-      body = JSON.stringify(body_obj);
-      headers["Content-Type"] = "application/json";
-      headers["Content-Length"] = body.length;
     }
+    if (includeWords) {
+      form.append("include_mvision", "true");
+    }
+    headers = { ...headers, ...form.getHeaders() };
 
     const uri = new URL(url);
     const options = {
@@ -70,8 +73,7 @@ export const request = (
     }
 
     if (input.inputType === "base64") {
-      req.write(body);
-      req.end();
+      form.pipe(req);
     }
   });
 };
