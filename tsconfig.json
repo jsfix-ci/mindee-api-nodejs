@@ -4,6 +4,9 @@
     "outDir": "dist",
     "module": "CommonJS",
   },
+  "paths": {
+      "@/*": ["mindee/*"]
+    },
   "include": ["mindee"],
   "exclude": ["node_modules"]
 }
