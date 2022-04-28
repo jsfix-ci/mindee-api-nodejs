@@ -1,4 +1,4 @@
-import { Field } from "./field";
+import { Field } from "@fields/field";
 
 export class Locale extends Field {
   /**

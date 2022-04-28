@@ -1,4 +1,4 @@
-import { Field } from "./field";
+import { Field } from "@fields/field";
 
 export class PaymentDetails extends Field {
   /**
@@ -34,7 +34,6 @@ export class PaymentDetails extends Field {
     this.#setKey(prediction[swiftKey], "swift");
   }
 
-  
   #setKey(value: any, key: any) {
     if (typeof value === "string" && value !== "N/A") this[key] = value;
     else this[key] = undefined;

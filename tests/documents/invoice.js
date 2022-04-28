@@ -1,17 +1,16 @@
-const fs = require("fs").promises;
-const path = require("path");
-const Invoice = require("../../mindee/documents/invoice");
-const expect = require("chai").expect;
-const api_path = require("../data/api/api_paths.json");
+import { Invoice } from "../../mindee/documents";
+import fs from "fs/promises";
+import path from "path";
+import { expect } from "chai";
+import * as api_path from "../data/api/api_paths.json";
 
 describe("Invoice Object initialization", async () => {
   before(async function () {
     const jsonDataNA = await fs.readFile(
       path.resolve(api_path.invoices.all_na)
     );
-    this.basePrediction = JSON.parse(
-      jsonDataNA
-    ).document.inference.pages[0].prediction;
+    this.basePrediction =
+      JSON.parse(jsonDataNA).document.inference.pages[0].prediction;
   });
 
   it("should initialize from a prediction object", async () => {

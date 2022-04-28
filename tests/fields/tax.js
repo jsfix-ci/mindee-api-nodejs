@@ -1,5 +1,5 @@
-const Tax = require("../../mindee/documents/fields/tax");
-const expect = require("chai").expect;
+import { Tax } from "../../mindee/documents/fields";
+import { expect } from "chai";
 
 describe("Test Tax field", () => {
   it("should create a Tax field", () => {

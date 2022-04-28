@@ -1,5 +1,5 @@
-const Field = require("../../mindee/documents/fields/field");
-const expect = require("chai").expect;
+import { Field } from "../../mindee/documents";
+import { expect } from "chai";
 
 describe("Test differents init of Field", () => {
   it("Should create a Field", () => {

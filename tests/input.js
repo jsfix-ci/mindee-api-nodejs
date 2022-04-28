@@ -1,8 +1,8 @@
-const Input = require("../mindee/inputs");
-const path = require("path");
-const fs = require("fs").promises;
-const expect = require("chai").expect;
-const { PDFDocument } = require("pdf-lib");
+import { Input } from "../mindee/inputs";
+import fs from "fs/promises";
+import path from "path";
+import { expect } from "chai";
+import { PDFDocument } from "pdf-lib";
 
 describe("Test different types of input", () => {
   it("should accept base64 inputs", async () => {

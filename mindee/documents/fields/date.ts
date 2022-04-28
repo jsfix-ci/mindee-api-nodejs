@@ -1,4 +1,4 @@
-import { Field } from "./field";
+import { Field } from "@fields/field";
 
 export class DateField extends Field {
   /**
@@ -7,6 +7,8 @@ export class DateField extends Field {
    * @param {Boolean} reconstructed - Does the object is reconstructed (not extracted by the API)
    * @param {Integer} pageNumber - Page number for multi pages pdf
    */
+  public dateObject: Date | undefined;
+
   constructor({
     prediction,
     valueKey = "iso",

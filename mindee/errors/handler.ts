@@ -1,4 +1,4 @@
-import { logger } from "../logger";
+import { logger } from "@mindee/logger";
 
 interface ErrorHandlerInterface {
   throw(error: any): void;

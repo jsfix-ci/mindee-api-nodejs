@@ -1,5 +1,5 @@
-const DateField = require("../../mindee/documents/fields/date");
-const expect = require("chai").expect;
+import { DateField } from "../../mindee/documents/fields";
+import { expect } from "chai";
 
 describe("Test Date field", () => {
   it("Should create a Date field", () => {

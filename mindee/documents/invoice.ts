@@ -1,4 +1,4 @@
-import { Document } from "./document";
+import { Document } from "@documents/document";
 
 import {
   Tax,
@@ -8,7 +8,7 @@ import {
   Amount,
   DateField,
   Field,
-} from "./fields";
+} from "@documents/fields";
 
 export class Invoice extends Document {
   /**
@@ -115,7 +115,9 @@ export class Invoice extends Document {
     this.totalExcl = new Amount(this.constructPrediction(totalExcl));
     this.totalTax = new Amount(this.constructPrediction(totalTax));
     this.DateField = new DateField(this.constructPrediction(invoiceDateField));
-    this.invoiceDateField = new DateField(this.constructPrediction(invoiceDateField));
+    this.invoiceDateField = new DateField(
+      this.constructPrediction(invoiceDateField)
+    );
     this.dueDateField = new DateField(this.constructPrediction(dueDateField));
     this.supplier = new Field(this.constructPrediction(supplier));
     this.supplierAddress = new Field(this.constructPrediction(supplierAddress));
@@ -216,15 +218,16 @@ export class Invoice extends Document {
       prediction: apiPrediction.customer_address,
       pageNumber,
     });
-    this.customerCompanyRegistration = apiPrediction.customer_company_registration.map(
-      function (customerCompanyRegistration: any) {
+    this.customerCompanyRegistration =
+      apiPrediction.customer_company_registration.map(function (
+        customerCompanyRegistration: any
+      ) {
         return new Field({
           prediction: customerCompanyRegistration,
           pageNumber,
           extraFields: ["type"],
         });
-      }
-    );
+      });
     this.paymentDetails = apiPrediction.payment_details.map(function (
       paymentDetail: any
     ) {
@@ -270,11 +273,11 @@ export class Invoice extends Document {
     this.checklist = {
       taxesMatchTotalIncl: this.#taxesMatchTotalIncl(),
       taxesMatchTotalExcl: this.#taxesMatchTotalExcl(),
-      taxesPlusTotalExclMatchTotalIncl: this.#taxesPlusTotalExclMatchTotalIncl(),
+      taxesPlusTotalExclMatchTotalIncl:
+        this.#taxesPlusTotalExclMatchTotalIncl(),
     };
   }
 
-  
   #reconstruct() {
     this.#reconstructTotalTax();
     this.#reconstructTotalExcl();
@@ -282,7 +285,6 @@ export class Invoice extends Document {
     this.#reconstructTotalTaxFromTotals();
   }
 
-  
   #taxesMatchTotalIncl() {
     // Check taxes and total include exist
     if (this.taxes.length === 0 || this.totalIncl.value === undefined)
@@ -321,7 +323,7 @@ export class Invoice extends Document {
   /**
    *
    */
-  
+
   #taxesMatchTotalExcl() {
     // Check taxes and total amount exist
     if (this.taxes.length === 0 || this.totalExcl.value == null) return false;
@@ -356,7 +358,6 @@ export class Invoice extends Document {
     return false;
   }
 
-  
   #taxesPlusTotalExclMatchTotalIncl() {
     if (
       this.totalExcl.value === undefined ||
@@ -385,7 +386,6 @@ export class Invoice extends Document {
     return false;
   }
 
-  
   #reconstructTotalTax() {
     if (this.taxes.length > 0) {
       const totalTax = {
@@ -403,7 +403,6 @@ export class Invoice extends Document {
     }
   }
 
-  
   #reconstructTotalTaxFromTotals() {
     if (
       this.totalTax.value === undefined &&
@@ -423,7 +422,7 @@ export class Invoice extends Document {
         });
     }
   }
-  
+
   #reconstructTotalExcl() {
     if (
       this.taxes.length &&
@@ -447,7 +446,6 @@ export class Invoice extends Document {
     }
   }
 
-  
   #reconstructTotalIncl() {
     if (
       this.taxes.length &&

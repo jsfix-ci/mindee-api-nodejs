@@ -2,11 +2,17 @@
   "extends": "@tsconfig/node16/tsconfig.json",
   "compilerOptions": {
     "outDir": "dist",
-    "module": "CommonJS",
+    "target": "ES6",
+    "module": "commonJS",
+    "baseUrl": ".",
+    "paths": {
+        "@mindee/*": ["mindee/*"],
+        "@api/*": ["mindee/api/*"],
+        "@documents/*": ["mindee/documents/*"],
+        "@fields/*": ["mindee/documents/fields/*"],
+        "@errors/*": ["mindee/errors/*"]
+      }
   },
-  "paths": {
-      "@/*": ["mindee/*"]
-    },
   "include": ["mindee"],
-  "exclude": ["node_modules"]
+  "exclude": ["./node_modules/", "./tests/", "./dist/"]
 }

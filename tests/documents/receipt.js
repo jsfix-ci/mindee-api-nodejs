@@ -1,15 +1,14 @@
-const Receipt = require("../../mindee/documents/receipt");
-const expect = require("chai").expect;
-const fs = require("fs").promises;
-const path = require("path");
-const api_path = require("../data/api/api_paths.json");
+import { Receipt } from "../../mindee/documents";
+import fs from "fs/promises";
+import path from "path";
+import { expect } from "chai";
+import * as api_path from "../data/api/api_paths.json";
 
 describe("Receipt Object initialization", async () => {
   before(async function () {
     const jsonData = await fs.readFile(path.resolve(api_path.receipts.all_na));
-    this.basePrediction = JSON.parse(
-      jsonData
-    ).data.document.inference.pages[0].prediction;
+    this.basePrediction =
+      JSON.parse(jsonData).data.document.inference.pages[0].prediction;
   });
 
   it("should initialize from a prediction object", async () => {

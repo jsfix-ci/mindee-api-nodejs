@@ -16,9 +16,9 @@ export class Document {
     this.fileExtension = undefined;
 
     if (inputFile != undefined) {
-        this.filepath = inputFile.filepath;
-        this.filename = inputFile.filename;
-        this.fileExtension = inputFile.fileExtension;
+      this.filepath = inputFile.filepath;
+      this.filename = inputFile.filename;
+      this.fileExtension = inputFile.fileExtension;
     }
     this.checklist = {};
   }

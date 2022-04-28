@@ -1,4 +1,4 @@
-import { Document } from "./document";
+import { Document } from "@documents/document";
 import {
   Tax,
   Field,
@@ -6,7 +6,7 @@ import {
   Locale,
   Orientation,
   DateField as Date,
-} from "./fields";
+} from "@documents/fields";
 import fs from "fs/promises";
 
 export class Receipt extends Document {
@@ -69,7 +69,6 @@ export class Receipt extends Document {
     this.#reconstruct();
   }
 
-  
   #initFromScratch({
     locale,
     totalExcl,
@@ -108,11 +107,11 @@ export class Receipt extends Document {
   }
 
   /**
-    Set the object attributes with api prediction values
-    @param apiPrediction: Raw prediction from HTTP response
-    @param pageNumber: Page number for multi pages pdf input
+   Set the object attributes with api prediction values
+   @param apiPrediction: Raw prediction from HTTP response
+   @param pageNumber: Page number for multi pages pdf input
    */
-  
+
   #initFromApiPrediction(apiPrediction: any, pageNumber: any, words: any) {
     this.locale = new Locale({ prediction: apiPrediction.locale, pageNumber });
     this.totalIncl = new Amount({
@@ -201,12 +200,11 @@ export class Receipt extends Document {
   /**
    * Call all check methods
    */
-  
+
   #checklist() {
     this.checklist = { taxesMatchTotalIncl: this.#taxesMatchTotal() };
   }
 
-  
   #taxesMatchTotal() {
     // Check taxes and total amount exist
 
@@ -245,7 +243,7 @@ export class Receipt extends Document {
   /**
    * Call all fields that need to be reconstructed
    */
-  
+
   #reconstruct() {
     this.#reconstructTotalExclFromTCCAndTaxes();
     this.#reconstructTotalTax();
@@ -256,7 +254,7 @@ export class Receipt extends Document {
    * The totalExcl Amount value is the difference between totalIncl and sum of taxes
    * The totalExcl Amount probability is the product of this.taxes probabilities multiplied by totalIncl probability
    */
-  
+
   #reconstructTotalExclFromTCCAndTaxes() {
     if (this.taxes.length && this.totalIncl.value != null) {
       const totalExcl = {
@@ -277,7 +275,7 @@ export class Receipt extends Document {
    * The totalTax Amount value is the sum of all this.taxes value
    * The totalTax Amount probability is the product of this.taxes probabilities
    */
-  
+
   #reconstructTotalTax() {
     if (this.taxes.length && this.totalTax.value == null) {
       const totalTax = {

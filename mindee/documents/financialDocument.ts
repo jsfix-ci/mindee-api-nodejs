@@ -1,6 +1,6 @@
-import { Document } from "./document";
-import { Invoice } from "./invoice";
-import { Receipt } from "./receipt";
+import { Document } from "@documents/document";
+import { Invoice } from "@documents/invoice";
+import { Receipt } from "@documents/receipt";
 import {
   Tax,
   Field,
@@ -8,7 +8,7 @@ import {
   Locale,
   Orientation,
   DateField as Date,
-} from "./fields";
+} from "@documents/fields";
 
 export class FinancialDocument extends Document {
   /**
@@ -90,7 +90,6 @@ export class FinancialDocument extends Document {
     this.#checklist();
   }
 
-  
   #initFromScratch({
     locale,
     totalIncl,
@@ -149,7 +148,6 @@ export class FinancialDocument extends Document {
     }
   }
 
-  
   #initFromApiPrediction(
     apiPrediction: any,
     inputFile: any,
@@ -236,14 +234,12 @@ export class FinancialDocument extends Document {
     `;
   }
 
-  
   #checklist() {
     this.checklist = {
       taxesMatchTotalIncl: this.#taxesMatchTotalIncl(),
     };
   }
 
-  
   #taxesMatchTotalIncl() {
     // Check taxes and total include exist
     if (this.taxes.length === 0 || this.totalIncl.value === undefined)

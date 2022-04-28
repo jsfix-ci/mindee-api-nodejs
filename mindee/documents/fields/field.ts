@@ -27,7 +27,7 @@ export class Field {
       this.value = prediction[valueKey];
       if (extraFields) {
         for (const fieldName of extraFields) {
-            this[fieldName] = prediction[fieldName];
+          this[fieldName] = prediction[fieldName];
         }
       }
     }

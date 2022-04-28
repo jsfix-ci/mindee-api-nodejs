@@ -7,7 +7,7 @@
   "scripts": {
     "build": "babel mindee -d lib",
     "test": "npm run build && mocha tests/**/*.js",
-    "lint": "eslint 'mindee/**/*.js' 'tests/*.js' 'mindee/**/*.ts' --max-warnings=0 --report-unused-disable-directives && echo '✔  Your .js files look good.'",
+    "lint": "eslint 'tests/*.js' 'mindee/**/*.ts' --max-warnings=0 --report-unused-disable-directives && echo '✔  Your .js files look good.'",
     "documentation": "jsdoc -r mindee -d docs"
   },
   "repository": {

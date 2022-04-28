@@ -17,7 +17,7 @@ import { Base64Encode } from "base64-stream";
 import * as fileType from "file-type";
 import * as ArrayBufferEncode from "base64-arraybuffer";
 
-import { errorHandler } from "./errors/handler";
+import { errorHandler } from "@errors/handler";
 import { PDFDocument } from "pdf-lib";
 
 type MIMETYPES_TYPE = "png" | "jpg" | "jpeg" | "webp" | "pdf";

@@ -1,5 +1,5 @@
-import { APIObject } from "./object";
-import { Input } from "../inputs";
+import { APIObject } from "@api/object";
+import { Input } from "@mindee/inputs";
 
 interface ReceiptParseProps {
   input: string;

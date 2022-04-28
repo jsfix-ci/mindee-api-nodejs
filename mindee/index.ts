@@ -1,11 +1,10 @@
-import { errorHandler } from "./errors/handler";
-import { logger } from "./logger";
+import { errorHandler } from "@errors/handler";
+import { logger } from "@mindee/logger";
 
-import { APIReceipt } from "./api/receipt";
+import { APIReceipt } from "@mindee/api/receipt";
+import { APIInvoice } from "@mindee/api/invoice";
 
-import { APIInvoice } from "./api/invoice";
-
-import { APIFinancialDocument } from "./api/financialDocument";
+import { APIFinancialDocument } from "@mindee/api/financialDocument";
 
 interface constructorObject {
   receiptToken: string;

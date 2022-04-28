@@ -1,8 +1,8 @@
-const fs = require("fs").promises;
-const path = require("path");
-const FinancialDocument = require("../../mindee/documents/financialDocument");
-const expect = require("chai").expect;
-const api_path = require("../data/api/api_paths.json");
+import { FinancialDocument } from "../../mindee/documents";
+import fs from "fs/promises";
+import path from "path";
+import { expect } from "chai";
+import * as api_path from "../data/api/api_paths.json";
 
 describe("Financial Document Object initialization", async () => {
   before(async function () {
@@ -12,12 +12,10 @@ describe("Financial Document Object initialization", async () => {
     const receiptJsonDataNA = await fs.readFile(
       path.resolve(api_path.receipts.all_na)
     );
-    this.invoiceBasePrediction = JSON.parse(
-      invoiceJsonDataNA
-    ).document.inference.pages[0].prediction;
-    this.receiptBasePrediction = JSON.parse(
-      receiptJsonDataNA
-    ).data.document.inference.pages[0].prediction;
+    this.invoiceBasePrediction =
+      JSON.parse(invoiceJsonDataNA).document.inference.pages[0].prediction;
+    this.receiptBasePrediction =
+      JSON.parse(receiptJsonDataNA).data.document.inference.pages[0].prediction;
   });
 
   it("should initialize from an invoice object", async () => {
@@ -29,7 +27,9 @@ describe("Financial Document Object initialization", async () => {
     expect(financialDocument.date.value).to.be.equal("2020-02-17");
     expect(financialDocument.totalTax.value).to.be.equal(97.98);
     expect(typeof financialDocument.toString()).to.be.equal("string");
-    expect(financialDocument.supplier.value).to.be.equal("TURNPIKE DESIGNS CO.");
+    expect(financialDocument.supplier.value).to.be.equal(
+      "TURNPIKE DESIGNS CO."
+    );
   });
 
   it("should initialize from a receipt object", async () => {

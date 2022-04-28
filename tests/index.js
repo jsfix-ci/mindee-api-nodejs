@@ -1,5 +1,5 @@
-const expect = require("chai").expect;
-const Client = require("../mindee");
+import { Client } from "../mindee";
+import { expect } from "chai";
 
 describe("Test client initialization", () => {
   it("should create a client", () => {

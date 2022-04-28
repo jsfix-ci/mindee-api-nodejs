@@ -1,5 +1,5 @@
-const PaymentDetails = require("../../mindee/documents/fields/paymentDetails");
-const expect = require("chai").expect;
+import { PaymentDetails } from "../../mindee/documents/fields";
+import { expect } from "chai";
 
 describe("Test PaymentDetails field", () => {
   it("should create a PaymentDetails field", () => {

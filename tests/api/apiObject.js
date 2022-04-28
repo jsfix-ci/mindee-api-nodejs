@@ -1,8 +1,8 @@
-const APIObject = require("../../mindee/api/object");
-const Input = require("../../mindee/inputs");
-const fs = require("fs").promises;
-const expect = require("chai").expect;
-const path = require("path");
+import { APIObject } from "../../mindee/api";
+import { Input } from "../../mindee/inputs";
+import fs from "fs/promises";
+import { expect } from "chai";
+import path from "path";
 
 describe("test APIObject", () => {
   it("should construct an APIObject", () => {

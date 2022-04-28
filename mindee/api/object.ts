@@ -1,6 +1,6 @@
-import { Response } from "./response";
-import { errorHandler } from "../errors/handler";
-import { request } from "./request";
+import { Response } from "@api/response";
+import { errorHandler } from "@errors/handler";
+import { request } from "@api/request";
 
 /**
  * Base class for APIs (APIReceipt & APIInvoice)

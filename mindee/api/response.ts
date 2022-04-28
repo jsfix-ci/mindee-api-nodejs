@@ -1,6 +1,6 @@
-import { Receipt } from "../documents/receipt";
-import { Invoice } from "../documents/invoice";
-import { FinancialDocument } from "../documents/financialDocument";
+import { Receipt } from "@documents/receipt";
+import { Invoice } from "@documents/invoice";
+import { FinancialDocument } from "@documents/financialDocument";
 import fs from "fs/promises";
 
 export class Response {
@@ -60,7 +60,7 @@ export class Response {
           ...http_data_document.ocr["mvision-v1"].pages[pageNumber].all_words
         );
       }
-        this[`${this.documentType}s`].push(
+      this[`${this.documentType}s`].push(
         constructors[this.documentType]({
           apiPrediction: prediction.prediction,
           inputFile: this.input,
