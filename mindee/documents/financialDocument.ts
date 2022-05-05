@@ -10,7 +10,37 @@ import {
   DateField as Date,
 } from "@documents/fields";
 
-export class FinancialDocument extends Document {
+interface FinancialDocumentInterface {
+  pageNumber: number | undefined;
+  level: string;
+  locale: Locale | undefined;
+  totalIncl: Amount | undefined;
+  date: Date | undefined;
+  invoiceDate: Date | undefined;
+  dueDate: Date | undefined;
+  category: Field | undefined;
+  merchantName: Field | undefined;
+  time: Field | undefined;
+  orientation: Orientation | undefined;
+  taxes: any[] | undefined;
+  totalTax: Amount | undefined;
+  totalExcl: Amount | undefined;
+  words: any[] | undefined;
+  supplier: Field | undefined;
+  supplierAddress: Field | undefined;
+  invoiceNumber: Field | undefined;
+  paymentDetails: Field | undefined;
+  companyNumber: Field | undefined;
+  vatNumber: Field | undefined;
+  customerName: Field | undefined;
+  customerAddress: Field | undefined;
+  customerCompanyRegistration: Field | undefined;
+}
+
+export class FinancialDocument
+  extends Document
+  implements FinancialDocumentInterface
+{
   /**
    *  @param {Object} apiPrediction - Json parsed prediction from HTTP response
    *  @param {Input} input - Input object
@@ -35,6 +65,31 @@ export class FinancialDocument extends Document {
    *  @param {Object} pageNumber - pageNumber for multi pages pdf input
    *  @param {String} level - specify whether object is built from "page" level or "document" level prediction
    */
+  pageNumber: number | undefined;
+  level: string;
+  locale: Locale | undefined;
+  totalIncl: Amount | undefined;
+  date: Date | undefined;
+  invoiceDate: Date | undefined;
+  dueDate: Date | undefined;
+  category: Field | undefined;
+  merchantName: Field | undefined;
+  time: Field | undefined;
+  orientation: Orientation | undefined;
+  taxes: any[] | undefined;
+  totalTax: Amount | undefined;
+  totalExcl: Amount | undefined;
+  words: any[] | undefined;
+  supplier: Field | undefined;
+  supplierAddress: Field | undefined;
+  invoiceNumber: Field | undefined;
+  paymentDetails: Field | undefined;
+  companyNumber: Field | undefined;
+  vatNumber: Field | undefined;
+  customerName: Field | undefined;
+  customerAddress: Field | undefined;
+  customerCompanyRegistration: Field | undefined;
+
   constructor({
     apiPrediction = undefined,
     inputFile = undefined,
@@ -121,17 +176,17 @@ export class FinancialDocument extends Document {
     this.date = new Date(constructPrediction(date));
     this.dueDate = new Date(constructPrediction(dueDate));
     this.supplier = new Field(constructPrediction(supplier));
-    this.supplierAddress = new Field(this.constructPrediction(supplierAddress));
+    this.supplierAddress = new Field(constructPrediction(supplierAddress));
     this.time = new Field(constructPrediction(time));
     this.orientation = new Orientation(constructPrediction(orientation));
     this.invoiceNumber = new Field(constructPrediction(invoiceNumber));
     this.paymentDetails = new Field(constructPrediction(paymentDetails));
     this.companyNumber = new Field(constructPrediction(companyNumber));
     this.vatNumber = new Field(constructPrediction(vatNumber));
-    this.customerName = new Field(this.constructPrediction(customerName));
-    this.customerAddress = new Field(this.constructPrediction(customerAddress));
+    this.customerName = new Field(constructPrediction(customerName));
+    this.customerAddress = new Field(constructPrediction(customerAddress));
     this.customerCompanyRegistration = new Field(
-      this.constructPrediction(customerCompanyRegistration)
+      constructPrediction(customerCompanyRegistration)
     );
     if (taxes !== undefined) {
       this.taxes = [];
@@ -218,7 +273,9 @@ export class FinancialDocument extends Document {
       this.customerAddress = new Field({
         prediction: { value: undefined, confidence: 0.0 },
       });
-      this.customerCompanyRegistration = [];
+      this.customerCompanyRegistration = new Field({
+        prediction: { value: undefined, confidence: 0.0 },
+      });
       if (receipt.words) this.words = receipt.words;
     }
   }
@@ -227,10 +284,10 @@ export class FinancialDocument extends Document {
     return `
     -----Financial document-----
     Filename: ${this.filename}
-    Total amount: ${this.totalIncl.value}
-    Date: ${this.date.value}
-    Supplier: ${this.supplier.value}
-    Total taxes: ${this.totalTax.value}
+    Total amount: ${(this.totalIncl as Amount).value}
+    Date: ${(this.date as Date).value}
+    Supplier: ${(this.supplier as Field).value}
+    Total taxes: ${(this.totalTax as Amount).value}
     `;
   }
 
@@ -242,13 +299,16 @@ export class FinancialDocument extends Document {
 
   #taxesMatchTotalIncl() {
     // Check taxes and total include exist
-    if (this.taxes.length === 0 || this.totalIncl.value === undefined)
+    if (
+      (this.taxes as any[]).length === 0 ||
+      (this.totalIncl as Amount).value === undefined
+    )
       return false;
 
     // Reconstruct totalIncl from taxes
     let totalVat = 0;
     let reconstructedTotal = 0;
-    this.taxes.forEach((tax: any) => {
+    (this.taxes as any[]).forEach((tax: any) => {
       if (tax.value === undefined || !tax.rate) return false;
       totalVat += tax.value;
       reconstructedTotal += tax.value + (100 * tax.value) / tax.rate;
@@ -261,15 +321,16 @@ export class FinancialDocument extends Document {
     const eps = 1 / (100 * totalVat);
 
     if (
-      this.totalIncl.value * (1 - eps) - 0.02 <= reconstructedTotal &&
-      reconstructedTotal <= this.totalIncl.value * (1 + eps) + 0.02
+      (this.totalIncl as Amount).value * (1 - eps) - 0.02 <=
+        reconstructedTotal &&
+      reconstructedTotal <= (this.totalIncl as Amount).value * (1 + eps) + 0.02
     ) {
-      this.taxes = this.taxes.map((tax: any) => ({
+      this.taxes = (this.taxes as any[]).map((tax: any) => ({
         ...tax,
         confidence: 1.0,
       }));
-      this.totalTax.confidence = 1.0;
-      this.totalIncl.confidence = 1.0;
+      (this.totalTax as Amount).confidence = 1.0;
+      (this.totalIncl as Amount).confidence = 1.0;
       return true;
     }
     return false;

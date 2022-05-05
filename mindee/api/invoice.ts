@@ -2,12 +2,12 @@ import { APIObject } from "@api/object";
 import { Input } from "@mindee/inputs";
 
 interface InvoiceParseProps {
-  input: string;
-  inputType: string;
-  filename: string | undefined;
-  version: string;
-  cutPdf: boolean;
-  includeWords: boolean;
+  input?: string;
+  inputType?: string;
+  filename?: string | undefined;
+  version?: string;
+  cutPdf?: boolean;
+  includeWords?: boolean;
 }
 
 export class APIInvoice extends APIObject {

@@ -230,7 +230,7 @@ export class Invoice extends Document implements InvoiceInterface {
       valueKey: "value",
       pageNumber,
     });
-    this.taxes = apiPrediction.taxes.map(function (taxPrediction) {
+    this.taxes = apiPrediction.taxes.map(function (taxPrediction: any) {
       return new Tax({
         prediction: taxPrediction,
         pageNumber,
@@ -240,7 +240,7 @@ export class Invoice extends Document implements InvoiceInterface {
       });
     });
     this.companyNumber = apiPrediction.company_registration.map(function (
-      companyNumber
+      companyNumber: any
     ) {
       return new Field({
         prediction: companyNumber,
@@ -273,17 +273,18 @@ export class Invoice extends Document implements InvoiceInterface {
       prediction: apiPrediction.customer_address,
       pageNumber,
     });
-    this.customerCompanyRegistration = apiPrediction.customer_company_registration.map(
-      function (customerCompanyRegistration) {
+    this.customerCompanyRegistration =
+      apiPrediction.customer_company_registration.map(function (
+        customerCompanyRegistration: any
+      ) {
         return new Field({
           prediction: customerCompanyRegistration,
           pageNumber,
           extraFields: ["type"],
         });
-      }
-    );
+      });
     this.paymentDetails = apiPrediction.payment_details.map(function (
-      paymentDetail
+      paymentDetail: any
     ) {
       return new PaymentDetails({ prediction: paymentDetail, pageNumber });
     });
@@ -310,16 +311,16 @@ export class Invoice extends Document implements InvoiceInterface {
     return `
     -----Invoice data-----
     Filename: ${this.filename}
-    Invoice number: ${this.invoiceNumber.value}
-    Total amount including taxes: ${this.totalIncl.value}
-    Total amount excluding taxes: ${this.totalExcl.value}
-    Invoice Date: ${this.invoiceDate.value}
-    Supplier name: ${this.supplier.value}
-    Supplier address: ${this.supplierAddress.value}
-    Customer name: ${this.customerName.value}
-    Customer address: ${this.customerAddress.value}
-    Taxes: ${this.taxes.map((tax) => tax.toString()).join(" - ")}
-    Total taxes: ${this.totalTax.value}
+    Invoice number: ${(this.invoiceNumber as Field).value}
+    Total amount including taxes: ${(this.totalIncl as Amount).value}
+    Total amount excluding taxes: ${(this.totalExcl as Amount).value}
+    Invoice Date: ${(this.invoiceDate as Date).value}
+    Supplier name: ${(this.supplier as Field).value}
+    Supplier address: ${(this.supplierAddress as Field).value}
+    Customer name: ${(this.customerName as Field).value}
+    Customer address: ${(this.customerAddress as Field).value}
+    Taxes: ${(this.taxes as any[]).map((tax) => tax.toString()).join(" - ")}
+    Total taxes: ${(this.totalTax as Amount).value}
     `;
   }
 
@@ -327,7 +328,8 @@ export class Invoice extends Document implements InvoiceInterface {
     this.checklist = {
       taxesMatchTotalIncl: this.#taxesMatchTotalIncl(),
       taxesMatchTotalExcl: this.#taxesMatchTotalExcl(),
-      taxesPlusTotalExclMatchTotalIncl: this.#taxesPlusTotalExclMatchTotalIncl(),
+      taxesPlusTotalExclMatchTotalIncl:
+        this.#taxesPlusTotalExclMatchTotalIncl(),
     };
   }
 
@@ -340,13 +342,16 @@ export class Invoice extends Document implements InvoiceInterface {
 
   #taxesMatchTotalIncl() {
     // Check taxes and total include exist
-    if (this.taxes.length === 0 || this.totalIncl.value === undefined)
+    if (
+      (this.taxes as any[]).length === 0 ||
+      (this.totalIncl as Amount).value === undefined
+    )
       return false;
 
     // Reconstruct totalIncl from taxes
     let totalVat = 0;
     let reconstructedTotal = 0;
-    this.taxes.forEach((tax) => {
+    (this.taxes as any[]).forEach((tax) => {
       if (tax.value === undefined || !tax.rate) return false;
       totalVat += tax.value;
       reconstructedTotal += tax.value + (100 * tax.value) / tax.rate;
@@ -359,12 +364,16 @@ export class Invoice extends Document implements InvoiceInterface {
     const eps = 1 / (100 * totalVat);
 
     if (
-      this.totalIncl.value * (1 - eps) - 0.02 <= reconstructedTotal &&
-      reconstructedTotal <= this.totalIncl.value * (1 + eps) + 0.02
+      (this.totalIncl as Amount).value * (1 - eps) - 0.02 <=
+        reconstructedTotal &&
+      reconstructedTotal <= (this.totalIncl as Amount).value * (1 + eps) + 0.02
     ) {
-      this.taxes = this.taxes.map((tax) => ({ ...tax, probability: 1.0 }));
-      this.totalTax.probability = 1.0;
-      this.totalIncl.probability = 1.0;
+      this.taxes = (this.taxes as any[]).map((tax) => ({
+        ...tax,
+        probability: 1.0,
+      }));
+      (this.totalTax as Amount).confidence = 1.0;
+      (this.totalIncl as Amount).confidence = 1.0;
       return true;
     }
     return false;
@@ -375,12 +384,16 @@ export class Invoice extends Document implements InvoiceInterface {
    */
   #taxesMatchTotalExcl() {
     // Check taxes and total amount exist
-    if (this.taxes.length === 0 || this.totalExcl.value == null) return false;
+    if (
+      (this.taxes as any[]).length === 0 ||
+      (this.totalExcl as Amount).value == null
+    )
+      return false;
 
     // Reconstruct total_incl from taxes
     let totalVat = 0;
     let reconstructedTotal = 0;
-    this.taxes.forEach((tax) => {
+    (this.taxes as any[]).forEach((tax) => {
       if (tax.value == null || !tax.rate) return false;
       totalVat += tax.value;
       reconstructedTotal += (100 * tax.value) / tax.rate;
@@ -393,12 +406,16 @@ export class Invoice extends Document implements InvoiceInterface {
     const eps = 1 / (100 * totalVat);
 
     if (
-      this.totalExcl.value * (1 - eps) - 0.02 <= reconstructedTotal &&
-      reconstructedTotal <= this.totalExcl.value * (1 + eps) + 0.02
+      (this.totalExcl as Amount).value * (1 - eps) - 0.02 <=
+        reconstructedTotal &&
+      reconstructedTotal <= (this.totalExcl as Amount).value * (1 + eps) + 0.02
     ) {
-      this.taxes = this.taxes.map((tax) => ({ ...tax, probability: 1.0 }));
-      this.totalTax.probability = 1.0;
-      this.totalExcl.probability = 1.0;
+      this.taxes = (this.taxes as any[]).map((tax) => ({
+        ...tax,
+        probability: 1.0,
+      }));
+      (this.totalTax as Amount).confidence = 1.0;
+      (this.totalExcl as Amount).confidence = 1.0;
       return true;
     }
     return false;
@@ -406,33 +423,36 @@ export class Invoice extends Document implements InvoiceInterface {
 
   #taxesPlusTotalExclMatchTotalIncl() {
     if (
-      this.totalExcl.value === undefined ||
-      this.taxes.length == 0 ||
-      this.totalIncl === undefined
+      (this.totalExcl as Amount).value === undefined ||
+      (this.taxes as any[]).length == 0 ||
+      (this.totalIncl as Amount) === undefined
     )
       return false;
     let totalVat = 0;
-    this.taxes.forEach((tax) => (totalVat += tax.value));
-    const reconstructedTotal = totalVat + this.totalExcl.value;
+    (this.taxes as any[]).forEach((tax) => (totalVat += tax.value));
+    const reconstructedTotal = totalVat + (this.totalExcl as Amount).value;
 
     if (totalVat <= 0) return false;
 
     if (
-      this.totalIncl.value - 0.01 <= reconstructedTotal &&
-      reconstructedTotal <= this.totalIncl.value + 0.01
+      (this.totalIncl as Amount).value - 0.01 <= reconstructedTotal &&
+      reconstructedTotal <= (this.totalIncl as Amount).value + 0.01
     ) {
-      this.taxes = this.taxes.map((tax) => ({ ...tax, probability: 1.0 }));
-      this.totalTax.probability = 1.0;
-      this.totalIncl.probability = 1.0;
+      this.taxes = (this.taxes as any[]).map((tax) => ({
+        ...tax,
+        probability: 1.0,
+      }));
+      (this.totalTax as Amount).confidence = 1.0;
+      (this.totalIncl as Amount).confidence = 1.0;
       return true;
     }
     return false;
   }
 
   #reconstructTotalTax() {
-    if (this.taxes.length > 0) {
+    if ((this.taxes as any[]).length > 0) {
       const totalTax = {
-        value: this.taxes.reduce((acc, tax) => {
+        value: (this.taxes as any[]).reduce((acc, tax) => {
           return tax.value !== undefined ? acc + tax.value : acc;
         }, 0),
         confidence: Field.arrayProbability(this.taxes),
@@ -448,14 +468,17 @@ export class Invoice extends Document implements InvoiceInterface {
 
   #reconstructTotalTaxFromTotals() {
     if (
-      this.totalTax.value === undefined &&
-      this.totalIncl.value > 0 &&
-      this.totalExcl.value > 0 &&
-      this.totalExcl.value <= this.totalIncl.value
+      (this.totalTax as Amount).value === undefined &&
+      (this.totalIncl as Amount).value > 0 &&
+      (this.totalExcl as Amount).value > 0 &&
+      (this.totalExcl as Amount).value <= (this.totalIncl as Amount).value
     ) {
       const totalTax = {
-        value: this.totalIncl.value - this.totalExcl.value,
-        confidence: this.totalIncl.probability * this.totalExcl.probability,
+        value:
+          (this.totalIncl as Amount).value - (this.totalExcl as Amount).value,
+        confidence:
+          (this.totalIncl as Amount).confidence *
+          (this.totalExcl as Amount).confidence,
       };
       if (totalTax.value > 0)
         this.totalTax = new Amount({
@@ -468,18 +491,19 @@ export class Invoice extends Document implements InvoiceInterface {
 
   #reconstructTotalExcl() {
     if (
-      this.taxes.length &&
-      this.totalIncl.value != null &&
-      this.totalExcl.value === undefined
+      (this.taxes as any[]).length &&
+      (this.totalIncl as Amount).value != null &&
+      (this.totalExcl as Amount).value === undefined
     ) {
       const totalExcl = {
         value:
-          this.totalIncl.value -
-          this.taxes.reduce((acc, tax) => {
+          (this.totalIncl as Amount).value -
+          (this.taxes as any[]).reduce((acc, tax) => {
             return tax.value !== undefined ? acc + tax.value : acc;
           }, 0),
         confidence:
-          Field.arrayProbability(this.taxes) * this.totalIncl.probability,
+          Field.arrayProbability(this.taxes) *
+          (this.totalExcl as Amount).confidence,
       };
       this.totalExcl = new Amount({
         prediction: totalExcl,
@@ -491,18 +515,19 @@ export class Invoice extends Document implements InvoiceInterface {
 
   #reconstructTotalIncl() {
     if (
-      this.taxes.length &&
-      this.totalExcl.value != null &&
-      this.totalIncl.value === undefined
+      (this.taxes as any[]).length &&
+      (this.totalExcl as Amount).value != null &&
+      (this.totalIncl as Amount).value === undefined
     ) {
       const totalIncl = {
         value:
-          this.totalExcl.value +
-          this.taxes.reduce((acc, tax) => {
+          (this.totalExcl as Amount).value +
+          (this.taxes as any[]).reduce((acc, tax) => {
             return tax.value ? acc + tax.value : acc;
           }, 0.0),
         confidence:
-          Field.arrayProbability(this.taxes) * this.totalExcl.probability,
+          Field.arrayProbability(this.taxes) *
+          (this.totalExcl as Amount).confidence,
       };
       this.totalIncl = new Amount({
         prediction: totalIncl,

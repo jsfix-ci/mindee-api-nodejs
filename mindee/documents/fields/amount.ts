@@ -2,7 +2,7 @@ import { Field } from "@fields/field";
 
 interface AmountConstructor {
   prediction: any;
-  valueKey: string;
+  valueKey?: string;
   reconstructed?: boolean;
   pageNumber?: number;
 }

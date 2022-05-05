@@ -2,12 +2,12 @@ import { Field } from "@fields/field";
 
 interface PaymentDetailsConstructor {
   prediction: any;
-  valueKey: string;
-  accountNumberKey: string;
-  ibanKey: string;
-  routingNumberKey: string;
-  swiftKey: string;
-  reconstructed: boolean;
+  valueKey?: string;
+  accountNumberKey?: string;
+  ibanKey?: string;
+  routingNumberKey?: string;
+  swiftKey?: string;
+  reconstructed?: boolean;
   pageNumber: number;
 }
 

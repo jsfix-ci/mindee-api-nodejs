@@ -19,6 +19,8 @@ describe("test APIObject", () => {
     const jsonData = await fs.readFile(
       path.resolve("tests/data/api/receipt/v3/receipt.json")
     );
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     const apiResponse = JSON.parse(jsonData);
     const input = new Input({ inputType: "dummy" });
     const response = apiObject.wrapResponse(input, apiResponse, "receipt");

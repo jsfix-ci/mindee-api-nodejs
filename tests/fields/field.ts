@@ -15,8 +15,8 @@ describe("Test differents init of Field", () => {
     };
     const field = new Field({ prediction });
     expect(field.value).to.equals("test");
-    expect(field.probability).to.equals(0.1);
-    expect(field.bbox.length).to.satisfy((length) => length > 0);
+    expect(field.confidence).to.equals(0.1);
+    expect(field.bbox.length).to.satisfy((length: number) => length > 0);
   });
 
   it("should not create a bbox", () => {
@@ -49,7 +49,7 @@ describe("Test differents init of Field", () => {
     };
     const field = new Field({ prediction });
     expect(field.value).to.be.undefined;
-    expect(field.probability).to.be.equals(0.0);
+    expect(field.confidence).to.be.equals(0.0);
   });
 
   it("should manipulate multiple fields", () => {

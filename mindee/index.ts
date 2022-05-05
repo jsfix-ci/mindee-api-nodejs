@@ -22,9 +22,9 @@ export class Client {
    */
   private readonly receiptToken: string | undefined;
   private readonly invoiceToken: string | undefined;
-  public readonly receipt: APIReceipt;
-  public readonly invoice: APIInvoice;
-  public readonly financialDocument: APIFinancialDocument;
+  readonly receipt: APIReceipt;
+  readonly invoice: APIInvoice;
+  readonly financialDocument: APIFinancialDocument;
 
   constructor({
     receiptToken,

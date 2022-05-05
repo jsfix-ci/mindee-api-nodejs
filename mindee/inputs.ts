@@ -72,13 +72,13 @@ export class Input {
   }
 
   async init() {
-    if (this.inputType === "base64") await this.initBase64();
-    else if (this.inputType === "path") await this.initFile();
-    else if (this.inputType === "stream") await this.initStream();
+    if (this.inputType === "base64") await this.doc_from_base64();
+    else if (this.inputType === "path") await this.doc_from_path();
+    else if (this.inputType === "stream") await this.doc_from_file();
     else this.initDummy();
   }
 
-  async initBase64() {
+  async doc_from_base64() {
     this.fileObject = this.file;
     this.filepath = undefined;
 
@@ -87,16 +87,16 @@ export class Input {
         Buffer.from(this.fileObject as string, "base64")
       );
       if (mimeType !== undefined) {
-        this.fileExtension = mimeType.mime;
+        this.fileExtension = mimeType.mime.toLowerCase();
         this.filename = `from_${this.inputType}.${mimeType.ext}`;
       } else {
         throw "Could not determine the MIME type. Please specify the 'filename' option.";
       }
     } else {
+      const filetype: string | undefined = this.filename.split(".").pop();
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
-      const filetype: MIMETYPES_TYPE = this.filename.split(".").pop();
-      this.fileExtension = this.MIMETYPES[filetype];
+      this.fileExtension = this.MIMETYPES[filetype.toLowerCase()];
     }
 
     if (this.fileExtension === "application/pdf" && this.allowCutPdf == true) {
@@ -104,7 +104,7 @@ export class Input {
     }
   }
 
-  async initFile() {
+  async doc_from_path() {
     this.fileObject = await fs.readFile(this.file as string);
     this.filepath = this.file;
     if (typeof this.file === "string") {
@@ -126,15 +126,18 @@ export class Input {
     }
     this.fileExtension = filetype ? this.MIMETYPES[filetype] : "";
 
-    if (this.fileExtension === "application/pdf" && this.allowCutPdf) {
+    if (
+      this.fileExtension.toLowerCase() === "application/pdf" &&
+      this.allowCutPdf
+    ) {
       await this.cutPdf();
     }
   }
 
-  async initStream() {
+  async doc_from_file() {
     this.file = (await this.streamToBase64(this.file)) as string | Buffer;
     this.inputType = "base64";
-    await this.initBase64();
+    await this.doc_from_base64();
   }
 
   initDummy() {

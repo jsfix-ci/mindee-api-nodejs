@@ -3,12 +3,12 @@ export interface FieldConstructor {
   valueKey?: string;
   reconstructed?: boolean;
   extraFields?: any;
-  pageNumber: number;
+  pageNumber?: number | undefined;
 }
 
 export class Field {
   bbox: any;
-  pageNumber: number;
+  pageNumber: number | undefined;
   confidence: number;
   reconstructed: boolean;
   value: any;
