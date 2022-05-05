@@ -268,8 +268,8 @@ export class FinancialDocument extends Document {
         ...tax,
         confidence: 1.0,
       }));
-      this.totalTax.probability = 1.0;
-      this.totalIncl.probability = 1.0;
+      this.totalTax.confidence = 1.0;
+      this.totalIncl.confidence = 1.0;
       return true;
     }
     return false;

@@ -3,16 +3,18 @@
   "compilerOptions": {
     "outDir": "dist",
     "target": "ES6",
-    "module": "commonJS",
+    "resolveJsonModule": true,
+    "allowJs": true,
     "baseUrl": ".",
     "paths": {
         "@mindee/*": ["mindee/*"],
         "@api/*": ["mindee/api/*"],
         "@documents/*": ["mindee/documents/*"],
         "@fields/*": ["mindee/documents/fields/*"],
-        "@errors/*": ["mindee/errors/*"]
+        "@errors/*": ["mindee/errors/*"],
+        "#apiPaths": ["tests/data/api/api_paths.json"]
       }
   },
-  "include": ["mindee"],
-  "exclude": ["./node_modules/", "./tests/", "./dist/"]
+  "include": ["mindee", "tests"],
+  "exclude": ["./node_modules/", "./dist/"]
 }

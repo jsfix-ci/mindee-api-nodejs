@@ -1,5 +1,6 @@
-import { Input } from "../mindee/inputs";
+import { Input } from "@mindee/inputs";
 import fs from "fs/promises";
+import { createReadStream } from "fs";
 import path from "path";
 import { expect } from "chai";
 import { PDFDocument } from "pdf-lib";
@@ -38,7 +39,7 @@ describe("Test different types of input", () => {
   });
 
   it("should accept read streams", async () => {
-    const stream = fs.createReadStream("data/receipts/receipt.jpg");
+    const stream = createReadStream("data/receipts/receipt.jpg");
     const input = new Input({ file: stream, inputType: "stream" });
     await input.init();
     expect(input.inputType).to.equals("stream");

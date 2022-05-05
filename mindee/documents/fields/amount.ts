@@ -1,5 +1,12 @@
 import { Field } from "@fields/field";
 
+interface AmountConstructor {
+  prediction: any;
+  valueKey: string;
+  reconstructed?: boolean;
+  pageNumber?: number;
+}
+
 export class Amount extends Field {
   /**
    * @param {Object} prediction - Prediction object from HTTP response
@@ -12,12 +19,12 @@ export class Amount extends Field {
     valueKey = "amount",
     reconstructed = false,
     pageNumber = 0,
-  }: any) {
+  }: AmountConstructor) {
     super({ prediction, valueKey, reconstructed, pageNumber });
     this.value = +parseFloat(prediction[valueKey]).toFixed(3);
     if (isNaN(this.value)) {
       this.value = undefined;
-      this.probability = 0;
+      this.confidence = 0;
     }
   }
 }

@@ -1,5 +1,5 @@
-import { APIObject } from "../../mindee/api";
-import { Input } from "../../mindee/inputs";
+import { APIObject } from "@mindee/api";
+import { Input } from "@mindee/inputs";
 import fs from "fs/promises";
 import { expect } from "chai";
 import path from "path";

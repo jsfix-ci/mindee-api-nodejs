@@ -2,15 +2,15 @@ import fs from "fs/promises";
 
 export class Document {
   checklist: any;
-  fileExtension: any;
-  filename: any;
-  filepath: any;
+  fileExtension: string | undefined;
+  filename: string | undefined;
+  filepath: string | undefined;
   /**
    * Takes a list of Documents and return one Document where
    * each field is set with the maximum probability field
    * @param {Input} inputFile - input file given to parse the document
    */
-  constructor(inputFile = undefined) {
+  constructor(inputFile?: any) {
     this.filepath = undefined;
     this.filename = undefined;
     this.fileExtension = undefined;
@@ -40,6 +40,8 @@ export class Document {
   /** Create a Document from a JSON file */
   static async load(path: any) {
     const file = fs.readFile(path);
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     const args = JSON.parse(file);
     return new Document({ reconsctruted: true, ...args });
   }

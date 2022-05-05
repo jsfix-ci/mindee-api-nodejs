@@ -16,7 +16,7 @@ export class Orientation extends Field {
     const orientations = [0, 90, 180, 270];
     super({ prediction, valueKey, reconstructed, pageNumber });
     this.value = parseInt(prediction[valueKey]);
-    if (isNaN(this.value)) this.probability = 0.0;
+    if (isNaN(this.value)) this.confidence = 0.0;
     if (!orientations.includes(this.value)) this.value = 0;
   }
 }

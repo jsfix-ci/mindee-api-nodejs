@@ -1,8 +1,8 @@
-import { Receipt } from "../../mindee/documents";
+import { Receipt } from "@mindee/documents";
 import fs from "fs/promises";
 import path from "path";
 import { expect } from "chai";
-import * as api_path from "../data/api/api_paths.json";
+import * as api_path from "#apiPaths";
 
 describe("Receipt Object initialization", async () => {
   before(async function () {

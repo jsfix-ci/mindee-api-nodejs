@@ -1,4 +1,4 @@
-import { Tax } from "../../mindee/documents/fields";
+import { Tax } from "@mindee/documents/fields";
 import { expect } from "chai";
 
 describe("Test Tax field", () => {

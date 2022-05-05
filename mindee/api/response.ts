@@ -3,7 +3,15 @@ import { Invoice } from "@documents/invoice";
 import { FinancialDocument } from "@documents/financialDocument";
 import fs from "fs/promises";
 
-export class Response {
+interface ResponseInterface {
+  httpResponse: any;
+  documentType: string;
+  input: any;
+  dump(path: string): any;
+  formatResponse(): void;
+}
+
+export class Response implements ResponseInterface {
   httpResponse: any;
   documentType: string;
   input: any;
@@ -31,6 +39,8 @@ export class Response {
 
   static async load(path: string) {
     const file = fs.readFile(path);
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     const args = JSON.parse(file);
     return new Response({ reconsctruted: true, ...args });
   }
@@ -44,6 +54,8 @@ export class Response {
     };
 
     const predictions = http_data_document.inference.pages.entries();
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     this[`${this.documentType}s`] = [];
     const document_words_content = [];
 
@@ -60,7 +72,11 @@ export class Response {
           ...http_data_document.ocr["mvision-v1"].pages[pageNumber].all_words
         );
       }
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       this[`${this.documentType}s`].push(
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         constructors[this.documentType]({
           apiPrediction: prediction.prediction,
           inputFile: this.input,
@@ -71,6 +87,8 @@ export class Response {
     }
 
     // Merge the list of Document into a unique Document
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     this[this.documentType] = constructors[this.documentType]({
       apiPrediction: http_data_document.inference.prediction,
       inputFile: this.input,

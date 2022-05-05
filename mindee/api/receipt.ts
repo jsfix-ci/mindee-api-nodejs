@@ -28,6 +28,8 @@ export class APIReceipt extends APIObject {
    * @param {Boolean} cutPdf: Automatically reconstruct pdf with more than 4 pages
    * @returns {Response} Wrapped response with Receipts objects parsed
    */
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
   async parse({
     input,
     inputType = "path",
@@ -37,7 +39,12 @@ export class APIReceipt extends APIObject {
     includeWords = false,
   }: ReceiptParseProps) {
     super.parse();
-    const inputFile = new Input(input, inputType, cutPdf, filename);
+    const inputFile = new Input({
+      file: input,
+      inputType: inputType,
+      allowCutPdf: cutPdf,
+      filename: filename,
+    });
     await inputFile.init();
     const url = `v${version}/predict`;
     return await super._request(url, inputFile, includeWords);

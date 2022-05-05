@@ -1,6 +1,21 @@
 import { Field } from "@fields/field";
 
+interface PaymentDetailsConstructor {
+  prediction: any;
+  valueKey: string;
+  accountNumberKey: string;
+  ibanKey: string;
+  routingNumberKey: string;
+  swiftKey: string;
+  reconstructed: boolean;
+  pageNumber: number;
+}
+
 export class PaymentDetails extends Field {
+  private accountNumber: number | undefined;
+  private iban: string | undefined;
+  private routingNumber: number | undefined;
+  private swift: number | undefined;
   /**
    * @param {Object} prediction - Prediction object from HTTP response
    * @param {String} valueKey - Key to use in the prediction dict to get the iban
@@ -20,7 +35,7 @@ export class PaymentDetails extends Field {
     swiftKey = "swift",
     reconstructed = false,
     pageNumber = 0,
-  }: any) {
+  }: PaymentDetailsConstructor) {
     super({ prediction, valueKey, reconstructed, pageNumber });
 
     this.accountNumber = undefined;
@@ -34,15 +49,24 @@ export class PaymentDetails extends Field {
     this.#setKey(prediction[swiftKey], "swift");
   }
 
-  #setKey(value: any, key: any) {
-    if (typeof value === "string" && value !== "N/A") this[key] = value;
-    else this[key] = undefined;
+  #setKey(value: any, key: string): void {
+    if (typeof value === "string" && value !== "N/A") {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      this[key] = value;
+    } else {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      this[key] = undefined;
+    }
   }
 
-  toString() {
+  toString(): string {
     let str = "";
     const keys = ["accountNumber", "iban", "routingNumber", "swift"];
     for (const key of keys) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       if (this[key]) str += `${this[key]}; `;
     }
     return str;

@@ -27,6 +27,8 @@ export class APIFinancialDocument extends APIObject {
    * @param {Boolean} cutPdf: Automatically reconstruct pdf with more than 4 pages
    * @returns {Response} Wrapped response with Receipts objects parsed
    */
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
   async parse({
     input,
     inputType = "path",
@@ -35,7 +37,12 @@ export class APIFinancialDocument extends APIObject {
     cutPdf = true,
     includeWords = false,
   }: FinancialDocumentParseProps) {
-    const inputFile = new Input(input, inputType, cutPdf, filename);
+    const inputFile = new Input({
+      file: input,
+      inputType: inputType,
+      allowCutPdf: cutPdf,
+      filename: filename,
+    });
     await inputFile.init();
     this.apiToken =
       inputFile.fileExtension === "application/pdf"

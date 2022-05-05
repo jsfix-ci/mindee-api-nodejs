@@ -1,8 +1,8 @@
 import { errorHandler } from "@errors/handler";
 import { logger } from "@mindee/logger";
 
-import { APIReceipt } from "@mindee/api/receipt";
-import { APIInvoice } from "@mindee/api/invoice";
+import { APIReceipt } from "@api/receipt";
+import { APIInvoice } from "@api/invoice";
 
 import { APIFinancialDocument } from "@mindee/api/financialDocument";
 
@@ -22,9 +22,9 @@ export class Client {
    */
   private readonly receiptToken: string | undefined;
   private readonly invoiceToken: string | undefined;
-  private readonly receipt: any;
-  private readonly invoice: any;
-  private readonly financialDocument: any;
+  public readonly receipt: APIReceipt;
+  public readonly invoice: APIInvoice;
+  public readonly financialDocument: APIFinancialDocument;
 
   constructor({
     receiptToken,
@@ -39,8 +39,8 @@ export class Client {
     this.receipt = new APIReceipt(this.receiptToken);
     this.invoice = new APIInvoice(this.invoiceToken);
     this.financialDocument = new APIFinancialDocument(
-      this.invoiceToken,
-      this.receiptToken
+      this.invoiceToken as string,
+      this.receiptToken as string
     );
   }
 }

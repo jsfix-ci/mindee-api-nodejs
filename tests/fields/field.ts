@@ -1,4 +1,4 @@
-import { Field } from "../../mindee/documents";
+import { Field } from "@mindee/documents";
 import { expect } from "chai";
 
 describe("Test differents init of Field", () => {

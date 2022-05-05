@@ -22,7 +22,7 @@ export class DateField extends Field {
       isNaN(this.dateObject.valueOf())
     ) {
       this.dateObject = undefined;
-      this.probability = 0.0;
+      this.confidence = 0.0;
       this.value = undefined;
     }
   }

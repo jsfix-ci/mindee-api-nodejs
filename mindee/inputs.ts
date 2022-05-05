@@ -22,6 +22,13 @@ import { PDFDocument } from "pdf-lib";
 
 type MIMETYPES_TYPE = "png" | "jpg" | "jpeg" | "webp" | "pdf";
 
+interface InputProps {
+  inputType: string;
+  file?: Buffer | string;
+  allowCutPdf?: boolean;
+  filename?: string;
+}
+
 export class Input {
   MIMETYPES = {
     png: "image/png",
@@ -32,6 +39,10 @@ export class Input {
   };
   ALLOWED_INPUT_TYPE = ["base64", "path", "stream", "dummy"];
   CUT_PDF_SIZE = 5;
+  public file;
+  public inputType;
+  public allowCutPdf;
+  public filename;
   public fileObject?: Buffer | string;
   public filepath?: Buffer | string;
   public fileExtension?: string;
@@ -44,12 +55,7 @@ export class Input {
    * @param allowCutPdf
    * NB: Because of async calls, init() should be called after creating the object
    */
-  constructor(
-    public file: Buffer | string,
-    public inputType: string,
-    public allowCutPdf: boolean = true,
-    public filename?: string
-  ) {
+  constructor({ file, inputType, allowCutPdf = true, filename }: InputProps) {
     // Check if inputType is valid
     if (!this.ALLOWED_INPUT_TYPE.includes(inputType)) {
       errorHandler.throw(
@@ -87,7 +93,9 @@ export class Input {
         throw "Could not determine the MIME type. Please specify the 'filename' option.";
       }
     } else {
-      const filetype = this.filename.split(".").pop();
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      const filetype: MIMETYPES_TYPE = this.filename.split(".").pop();
       this.fileExtension = this.MIMETYPES[filetype];
     }
 
@@ -97,7 +105,7 @@ export class Input {
   }
 
   async initFile() {
-    this.fileObject = await fs.readFile(this.file);
+    this.fileObject = await fs.readFile(this.file as string);
     this.filepath = this.file;
     if (typeof this.file === "string") {
       this.filename = this.filename || path.basename(this.file);

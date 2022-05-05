@@ -9,7 +9,23 @@ import {
 } from "@documents/fields";
 import fs from "fs/promises";
 
-export class Receipt extends Document {
+interface ReceiptInterface {
+  pageNumber: number | undefined;
+  level: string;
+  locale: Locale | undefined;
+  totalIncl: Amount | undefined;
+  date: Date | undefined;
+  category: Field | undefined;
+  merchantName: Field | undefined;
+  time: Field | undefined;
+  orientation: Orientation | undefined;
+  taxes: any[] | undefined;
+  totalTax: Amount | undefined;
+  totalExcl: Amount | undefined;
+  words: any[] | undefined;
+}
+
+export class Receipt extends Document implements ReceiptInterface {
   /**
    *  @param {Object} apiPrediction - Json parsed prediction from HTTP response
    *  @param {Input} input - Input object
@@ -26,6 +42,25 @@ export class Receipt extends Document {
    *  @param {Object} totalExcl - total taxes excluded value for creating Receipt object from scratch
    *  @param {String} level - specify whether object is built from "page" level or "document" level prediction
    */
+  pageNumber: number | undefined;
+  level: string;
+  locale: Locale | undefined;
+  totalIncl: Amount | undefined;
+  date: Date | undefined;
+  category: Field | undefined;
+  merchantName: Field | undefined;
+  time: Field | undefined;
+  orientation: Orientation | undefined;
+  taxes: any[] | undefined;
+  totalTax: Amount | undefined;
+  totalExcl: Amount | undefined;
+  words: any[] | undefined;
+  private constructPrediction: (item: any) => {
+    pageNumber: number;
+    prediction: { value: any };
+    valueKey: string;
+  };
+
   constructor({
     apiPrediction = undefined,
     inputFile = undefined,
@@ -112,7 +147,7 @@ export class Receipt extends Document {
    @param pageNumber: Page number for multi pages pdf input
    */
 
-  #initFromApiPrediction(apiPrediction: any, pageNumber: any, words: any) {
+  #initFromApiPrediction(apiPrediction: any, pageNumber: number, words: any) {
     this.locale = new Locale({ prediction: apiPrediction.locale, pageNumber });
     this.totalIncl = new Amount({
       prediction: apiPrediction.total_incl,
@@ -181,18 +216,22 @@ export class Receipt extends Document {
     return `
     -----Receipt data-----
     Filename: ${this.filename}
-    Total amount: ${this.totalIncl.value}
-    Date: ${this.date.value}
-    Category: ${this.category.value}
-    Time: ${this.time.value}
-    Merchant name: ${this.merchantName.value}
-    Taxes: ${this.taxes.map((tax: any) => tax.toString()).join(" - ")}
-    Total taxes: ${this.totalTax.value}
+    Total amount: ${(this.totalIncl as Amount).value}
+    Date: ${(this.date as Date).value}
+    Category: ${(this.category as Field).value}
+    Time: ${(this.time as Field).value}
+    Merchant name: ${(this.merchantName as Field).value}
+    Taxes: ${this.taxes}
+      .map((tax: any) => tax.toString())
+      .join(" - ")}
+    Total taxes: ${(this.totalTax as Amount).value}
     `;
   }
 
   static async load(path: any) {
     const file = fs.readFile(path);
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     const args = JSON.parse(file);
     return new Receipt({ reconsctruted: true, ...args });
   }
@@ -208,12 +247,16 @@ export class Receipt extends Document {
   #taxesMatchTotal() {
     // Check taxes and total amount exist
 
-    if (this.taxes.length === 0 || this.totalIncl.value == null) return false;
+    if (
+      (this.taxes as any[]).length === 0 ||
+      (this.totalIncl as Amount).value == null
+    )
+      return false;
 
     // Reconstruct total_incl from taxes
     let totalVat = 0;
     let reconstructedTotal = 0;
-    this.taxes.forEach((tax: any) => {
+    (this.taxes as any[]).forEach((tax: any) => {
       if (tax.value == null || !tax.rate) return false;
       totalVat += tax.value;
       reconstructedTotal += tax.value + (100 * tax.value) / tax.rate;
@@ -226,15 +269,16 @@ export class Receipt extends Document {
     const eps = 1 / (100 * totalVat);
 
     if (
-      this.totalIncl.value * (1 - eps) - 0.02 <= reconstructedTotal &&
-      reconstructedTotal <= this.totalIncl.value * (1 + eps) + 0.02
+      (this.totalIncl as Amount).value * (1 - eps) - 0.02 <=
+        reconstructedTotal &&
+      reconstructedTotal <= (this.totalIncl as Amount).value * (1 + eps) + 0.02
     ) {
-      this.taxes = this.taxes.map((tax: any) => ({
+      this.taxes = (this.taxes as any[]).map((tax: any) => ({
         ...tax,
-        probability: 1.0,
+        confidence: 1.0,
       }));
-      this.totalTax.probability = 1.0;
-      this.totalIncl.probability = 1.0;
+      (this.totalTax as Amount).confidence = 1.0;
+      (this.totalIncl as Amount).confidence = 1.0;
       return true;
     }
     return false;
@@ -256,11 +300,15 @@ export class Receipt extends Document {
    */
 
   #reconstructTotalExclFromTCCAndTaxes() {
-    if (this.taxes.length && this.totalIncl.value != null) {
+    if (
+      (this.taxes as any[]).length &&
+      (this.totalIncl as Amount).value != null
+    ) {
       const totalExcl = {
-        value: this.totalIncl.value - Field.arraySum(this.taxes),
+        value: (this.totalIncl as Amount).value - Field.arraySum(this.taxes),
         confidence:
-          Field.arrayProbability(this.taxes) * this.totalIncl.probability,
+          Field.arrayProbability(this.taxes) *
+          (this.totalIncl as Amount).confidence,
       };
       this.totalExcl = new Amount({
         prediction: totalExcl,
@@ -277,9 +325,12 @@ export class Receipt extends Document {
    */
 
   #reconstructTotalTax() {
-    if (this.taxes.length && this.totalTax.value == null) {
+    if (
+      (this.taxes as any[]).length &&
+      (this.totalTax as Amount).value == null
+    ) {
       const totalTax = {
-        value: this.taxes
+        value: (this.taxes as any[])
           .map((tax: any) => tax.value || 0)
           .reduce((a: any, b: any) => a + b, 0),
         confidence: Field.arrayProbability(this.taxes),

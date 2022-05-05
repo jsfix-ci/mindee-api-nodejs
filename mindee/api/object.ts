@@ -1,13 +1,31 @@
 import { Response } from "@api/response";
 import { errorHandler } from "@errors/handler";
 import { request } from "@api/request";
+import { Input } from "@mindee/inputs";
+
+interface APIObjectInterface {
+  baseUrl: string;
+  apiToken: string | undefined;
+  apiName: string;
+  parse(): void;
+  _request(
+    url: string,
+    inputFile: string,
+    includeWord: boolean
+  ): Promise<Response>;
+  wrapResponse(
+    inputFile: string,
+    response: any,
+    documentType: string
+  ): Response;
+}
 
 /**
  * Base class for APIs (APIReceipt & APIInvoice)
  *  @param {String} apiToken - Token of the API used for parsing document
  *  @param {String} apiName - Name of the API used for parsing document
  */
-export class APIObject {
+export class APIObject implements APIObjectInterface {
   baseUrl: string;
 
   constructor(
@@ -38,7 +56,7 @@ export class APIObject {
     @param {Boolean} includeWords - Include Mindee vision words in Response
     @returns {Response}
   */
-  async _request(url: string, inputFile: any, includeWords = false) {
+  async _request(url: string, inputFile: string | Input, includeWords = false) {
     const headers = {
       "X-Inferuser-Token": this.apiToken,
     };
@@ -58,7 +76,7 @@ export class APIObject {
     @param {Document} documentType - Document class in {"Receipt", "Invoice", "Financial_document"}
     @returns {Response}
   */
-  wrapResponse(inputFile: string, response: any, documentType: any) {
+  wrapResponse(inputFile: string | Input, response: any, documentType: string) {
     if (response.statusCode > 201) {
       const errorMessage = JSON.stringify(response.data, null, 4);
       errorHandler.throw(

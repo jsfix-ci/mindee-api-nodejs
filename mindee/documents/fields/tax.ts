@@ -1,5 +1,14 @@
 import { Field } from "@fields/field";
 
+interface TaxConstructor {
+  prediction: any;
+  valueKey: string;
+  rateKey?: string;
+  codeKey?: string;
+  reconstructed?: boolean;
+  pageNumber: number;
+}
+
 export class Tax extends Field {
   /**
    * @param {Object} prediction - Prediction object from HTTP response
@@ -9,6 +18,9 @@ export class Tax extends Field {
    * @param {Boolean} reconstructed - Does the object is reconstructed (not extracted by the API)
    * @param {Integer} pageNumber - Page number for multi pages pdf
    */
+  rate: number | undefined;
+  code: string | undefined;
+
   constructor({
     prediction,
     valueKey = "value",
@@ -16,7 +28,7 @@ export class Tax extends Field {
     codeKey = "code",
     reconstructed = false,
     pageNumber = 0,
-  }: any) {
+  }: TaxConstructor) {
     super({ prediction, valueKey, reconstructed, pageNumber });
 
     this.rate = parseFloat(prediction[rateKey]);
@@ -28,14 +40,16 @@ export class Tax extends Field {
     this.value = parseFloat(prediction[valueKey]);
     if (isNaN(this.value)) {
       this.value = undefined;
-      this.probability = 0.0;
+      this.confidence = 0.0;
     }
   }
 
-  toString() {
+  toString(): string {
     let str = "";
     const keys = ["value", "rate", "code"];
     for (const [i, key] of keys.entries()) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       const value = this[key] === undefined ? "_" : this[key].toString();
       if (i < keys.length - 1) str += `${value}${key === "rate" ? "%" : ""}; `;
       else str += value;
