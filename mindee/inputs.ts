@@ -1,11 +1,3 @@
-// const fs = require("fs").promises;
-// const errorHandler = require("./errors/handler");
-// const path = require("path");
-// const { PDFDocument } = require("pdf-lib");
-// const concat = require("concat-stream");
-// const { Base64Encode } = require("base64-stream");
-// const fileType = require("file-type");
-// const ArrayBufferEncode = require("base64-arraybuffer");
 import fs from "fs/promises";
 import * as path from "path";
 

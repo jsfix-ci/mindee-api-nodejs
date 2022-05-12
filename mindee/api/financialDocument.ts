@@ -11,7 +11,7 @@ interface FinancialDocumentParseProps {
 }
 
 export class APIFinancialDocument extends APIObject {
-  apiToken: string | undefined;
+  declare apiToken: string | undefined;
 
   constructor(public invoiceToken: string, public receiptToken: string) {
     super(undefined, "financialDocument");

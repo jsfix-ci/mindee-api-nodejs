@@ -1,3 +1,5 @@
+import "module-alias/register";
+
 import { errorHandler } from "@errors/handler";
 import { logger } from "@mindee/logger";
 
@@ -13,7 +15,7 @@ interface constructorObject {
   debug: boolean;
 }
 
-export class Client {
+class Client {
   /**
    * @param {string} receiptToken - Receipt Expense Token from Mindee dashboard
    * @param {string} invoiceToken - Invoice Token from Mindee dashboard
@@ -45,6 +47,7 @@ export class Client {
   }
 }
 
+module.exports = Client;
 exports.documents = require("./documents");
 exports.api = require("./api");
 exports.inputs = require("./inputs");
