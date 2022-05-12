@@ -56,7 +56,7 @@ export const request = (
             data: JSON.parse(responseBody),
           });
         } catch (error) {
-          console.log(responseBody, error);
+          console.error(responseBody, error);
         }
       });
     });
