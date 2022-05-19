@@ -1,4 +1,4 @@
-import { Field, FinancialDocument } from "@mindee/documents";
+import { Field, FinancialDocument } from "../../dist/documents/index";
 import fs from "fs/promises";
 import path from "path";
 import { expect } from "chai";
