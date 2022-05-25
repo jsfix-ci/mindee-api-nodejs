@@ -15,6 +15,12 @@ const OWNER = "mindee";
 const INVOICE_URL_NAME = "invoices";
 const INVOICE_VERSION = "3";
 
+const RECEIPT_URL_NAME = "expense_receipts";
+const RECEIPT_VERSION = "3";
+
+const PASSPORT_URL_NAME = "passport";
+const PASSPORT_VERSION = "1";
+
 export class Endpoint {
   api_keys: string;
   url_name: string;
@@ -56,7 +62,7 @@ export class Endpoint {
         headers["Content-Length"] = body.length;
       }
 
-      const uri = new URL(this.url_root);
+      const uri = new URL(`${this.url_root}/predict`);
       const options = {
         method: method,
         headers: headers,
@@ -102,5 +108,28 @@ export class Endpoint {
 export class InvoiceEndpoint extends Endpoint {
   constructor(api_key: string) {
     super(OWNER, INVOICE_URL_NAME, INVOICE_VERSION, api_key);
+  }
+}
+
+export class ReceiptEndpoint extends Endpoint {
+  constructor(api_key: string) {
+    super(OWNER, RECEIPT_URL_NAME, RECEIPT_VERSION, api_key);
+  }
+}
+
+export class PassportEndpoint extends Endpoint {
+  constructor(api_key: string) {
+    super(OWNER, PASSPORT_URL_NAME, PASSPORT_VERSION, api_key);
+  }
+}
+
+export class CustomEndpoint extends Endpoint {
+  constructor(
+    document_type: string,
+    account_name: string,
+    version: string,
+    api_key: string
+  ) {
+    super(account_name, document_type, version, api_key);
   }
 }

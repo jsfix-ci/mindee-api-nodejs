@@ -307,7 +307,7 @@ export class Receipt extends Document implements ReceiptInterface {
       const totalExcl = {
         value: (this.totalIncl as Amount).value - Field.arraySum(this.taxes),
         confidence:
-          Field.arrayProbability(this.taxes) *
+          Field.arrayConfidence(this.taxes) *
           (this.totalIncl as Amount).confidence,
       };
       this.totalExcl = new Amount({
@@ -333,7 +333,7 @@ export class Receipt extends Document implements ReceiptInterface {
         value: (this.taxes as any[])
           .map((tax: any) => tax.value || 0)
           .reduce((a: any, b: any) => a + b, 0),
-        confidence: Field.arrayProbability(this.taxes),
+        confidence: Field.arrayConfidence(this.taxes),
       };
       if (totalTax.value > 0)
         this.totalTax = new Amount({

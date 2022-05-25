@@ -455,7 +455,7 @@ export class Invoice extends Document implements InvoiceInterface {
         value: (this.taxes as any[]).reduce((acc, tax) => {
           return tax.value !== undefined ? acc + tax.value : acc;
         }, 0),
-        confidence: Field.arrayProbability(this.taxes),
+        confidence: Field.arrayConfidence(this.taxes),
       };
       if (totalTax.value > 0)
         this.totalTax = new Amount({
@@ -502,7 +502,7 @@ export class Invoice extends Document implements InvoiceInterface {
             return tax.value !== undefined ? acc + tax.value : acc;
           }, 0),
         confidence:
-          Field.arrayProbability(this.taxes) *
+          Field.arrayConfidence(this.taxes) *
           (this.totalExcl as Amount).confidence,
       };
       this.totalExcl = new Amount({
@@ -526,7 +526,7 @@ export class Invoice extends Document implements InvoiceInterface {
             return tax.value ? acc + tax.value : acc;
           }, 0.0),
         confidence:
-          Field.arrayProbability(this.taxes) *
+          Field.arrayConfidence(this.taxes) *
           (this.totalExcl as Amount).confidence,
       };
       this.totalIncl = new Amount({

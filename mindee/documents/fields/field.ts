@@ -75,7 +75,7 @@ export class Field {
    * @param {Array<Field>} array - Array of Fields
    * @returns {Number} product of all the fields probaility
    */
-  static arrayProbability(array: any): number {
+  static arrayConfidence(array: any): number {
     let total = 1.0;
     for (const field of array) {
       total *= field.confidence;

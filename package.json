@@ -7,8 +7,8 @@
   "scripts": {
     "build": "./node_modules/typescript/bin/tsc",
     "clean": "rm -rf dist",
-    "test": "npm run build && mocha tests/**/*.ts",
-    "lint": "eslint 'tests/*.ts' 'mindee/**/*.ts' --report-unused-disable-directives && echo '✔  Your .ts files look good.'",
+    "test": "npm run build && mocha tests/**/*.js",
+    "lint": "eslint 'mindee/**/*.ts' --report-unused-disable-directives && echo '✔  Your .ts files look good.'",
     "documentation": "jsdoc -r mindee -d docs"
   },
   "repository": {
@@ -22,10 +22,10 @@
   "homepage": "https://github.com/mindee/mindee-api-nodejs/#readme",
   "_moduleAliases": {
     "@mindee": "dist/",
-    "@api": "dist/api",
-    "@documents": "dist/documents",
-    "@fields": "dist/documents/fields",
-    "@errors": "dist/errors"
+    "@api": "dist/api/",
+    "@documents": "dist/documents/",
+    "@fields": "dist/documents/fields/",
+    "@errors": "dist/errors/"
   },
   "devDependencies": {
     "@babel/cli": "^7.12.8",
@@ -59,6 +59,7 @@
     "file-type": "^16.5.3",
     "form-data": "^3.0.1",
     "module-alias": "^2.2.2",
+    "mrz": "^3.1.4",
     "pdf-lib": "^1.17.1"
   },
   "keywords": [
