@@ -1,9 +1,8 @@
 import { Receipt } from "@documents/receipt";
 import { Invoice } from "@documents/invoice";
 import { FinancialDocument } from "@documents/financialDocument";
-import fs from "fs/promises";
+import { promises as fs } from "fs";
 import { CustomDocument } from "@documents/custom";
-import * as http from "http";
 import { Passport } from "@mindee/documents";
 
 interface ResponseInterface {

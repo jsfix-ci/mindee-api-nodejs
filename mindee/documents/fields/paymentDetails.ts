@@ -8,14 +8,14 @@ interface PaymentDetailsConstructor {
   routingNumberKey?: string;
   swiftKey?: string;
   reconstructed?: boolean;
-  pageNumber: number;
+  pageNumber?: number;
 }
 
 export class PaymentDetails extends Field {
-  private accountNumber: number | undefined;
-  private iban: string | undefined;
-  private routingNumber: number | undefined;
-  private swift: number | undefined;
+  accountNumber: number | undefined;
+  iban: string | undefined;
+  routingNumber: number | undefined;
+  swift: number | undefined;
   /**
    * @param {Object} prediction - Prediction object from HTTP response
    * @param {String} valueKey - Key to use in the prediction dict to get the iban

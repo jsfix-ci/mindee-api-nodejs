@@ -7,7 +7,8 @@ import {
   Orientation,
   DateField as Date,
 } from "@documents/fields";
-import fs from "fs/promises";
+// import fs from "fs/promises";
+import { promises as fs } from "fs";
 
 interface ReceiptInterface {
   pageNumber: number | undefined;

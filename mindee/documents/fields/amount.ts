@@ -21,6 +21,8 @@ export class Amount extends Field {
     pageNumber = 0,
   }: AmountConstructor) {
     super({ prediction, valueKey, reconstructed, pageNumber });
+    console.log(prediction);
+    console.log(valueKey);
     this.value = +parseFloat(prediction[valueKey]).toFixed(3);
     if (isNaN(this.value)) {
       this.value = undefined;

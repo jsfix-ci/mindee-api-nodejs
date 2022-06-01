@@ -1,9 +1,9 @@
 import { Field } from "@fields/field";
 
 export class Locale extends Field {
-  private language: string | undefined;
-  private country: string | undefined;
-  private currency: string | undefined;
+  language: string | undefined;
+  country: string | undefined;
+  currency: string | undefined;
   /**
    * @param {Object} prediction - Prediction object from HTTP response
    * @param {String} valueKey - Key to use in the prediction dict

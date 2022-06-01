@@ -1,4 +1,5 @@
-import fs from "fs/promises";
+// import fs from "fs/promises";
+import { promises as fs } from "fs";
 
 export class Document {
   checklist: any;
@@ -61,8 +62,8 @@ export class Document {
             ? finalDocument[attribute]
             : document?.[attribute];
         } else if (
-          document?.[attribute]?.probability >
-          finalDocument[attribute].probability
+          document?.[attribute]?.confidence >
+          finalDocument[attribute].confidence
         ) {
           finalDocument[attribute] = document?.[attribute];
         }

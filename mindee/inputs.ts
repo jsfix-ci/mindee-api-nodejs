@@ -1,4 +1,5 @@
-import fs from "fs/promises";
+// import fs from "fs/promises";
+import { promises as fs } from "fs";
 import * as path from "path";
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -11,12 +12,13 @@ import * as ArrayBufferEncode from "base64-arraybuffer";
 
 import { errorHandler } from "@errors/handler";
 import { PDFDocument } from "pdf-lib";
+import { ReadStream } from "fs";
 
 type MIMETYPES_TYPE = "png" | "jpg" | "jpeg" | "webp" | "pdf";
 
 interface InputProps {
   inputType: string;
-  file?: Buffer | string;
+  file?: Buffer | string | ReadStream;
   allowCutPdf?: boolean;
   filename?: string;
 }
@@ -35,8 +37,8 @@ export class Input {
   public inputType;
   public allowCutPdf;
   public filename;
-  public fileObject?: Buffer | string;
-  public filepath?: Buffer | string;
+  public fileObject?: Buffer | string | ReadStream;
+  public filepath?: Buffer | string | ReadStream;
   public fileExtension?: string;
 
   /**
@@ -64,19 +66,22 @@ export class Input {
   }
 
   async init() {
-    if (this.inputType === "base64") await this.doc_from_base64();
-    else if (this.inputType === "path") await this.doc_from_path();
-    else if (this.inputType === "stream") await this.doc_from_file();
+    if (this.inputType === "base64") await this.docFromBase64();
+    else if (this.inputType === "path") await this.docFromPath();
+    else if (this.inputType === "stream") await this.docFromFile();
+    else if (this.inputType === "bytes") await this.docFromBytes();
     else this.initDummy();
   }
 
-  async doc_from_base64() {
+  async docFromBuffer(encode: string) {
     this.fileObject = this.file;
     this.filepath = undefined;
 
     if (this.filename === undefined) {
       const mimeType = await fileType.fromBuffer(
-        Buffer.from(this.fileObject as string, "base64")
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        Buffer.from(this.fileObject as string, encode)
       );
       if (mimeType !== undefined) {
         this.fileExtension = mimeType.mime.toLowerCase();
@@ -96,7 +101,15 @@ export class Input {
     }
   }
 
-  async doc_from_path() {
+  async docFromBase64() {
+    await this.docFromBuffer("base64");
+  }
+
+  async docFromBytes() {
+    await this.docFromBuffer("hex");
+  }
+
+  async docFromPath() {
     this.fileObject = await fs.readFile(this.file as string);
     this.filepath = this.file;
     if (typeof this.file === "string") {
@@ -126,10 +139,10 @@ export class Input {
     }
   }
 
-  async doc_from_file() {
+  async docFromFile() {
     this.file = (await this.streamToBase64(this.file)) as string | Buffer;
     this.inputType = "base64";
-    await this.doc_from_base64();
+    await this.docFromBase64();
   }
 
   initDummy() {

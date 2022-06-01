@@ -2,11 +2,11 @@ import { Field } from "@fields/field";
 
 interface TaxConstructor {
   prediction: any;
-  valueKey: string;
+  valueKey?: string;
   rateKey?: string;
   codeKey?: string;
   reconstructed?: boolean;
-  pageNumber: number;
+  pageNumber?: number;
 }
 
 export class Tax extends Field {

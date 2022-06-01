@@ -1,13 +1,16 @@
 {
   "extends": "@tsconfig/node16/tsconfig.json",
   "compilerOptions": {
-    "outDir": "dist",
     "target": "es6",
+    "strict": true,
     "esModuleInterop": true,
+    "moduleResolution": "node",
+    "module": "commonjs",
     "resolveJsonModule": true,
     "allowJs": true,
     "declaration": true,
-    "rootDir": "mindee",
+    "outDir": "dist",
+    "rootDir": "./",
     "baseUrl": "./",
     "paths": {
         "@mindee/*": ["mindee/*"],
@@ -15,9 +18,9 @@
         "@documents/*": ["mindee/documents/*"],
         "@fields/*": ["mindee/documents/fields/*"],
         "@errors/*": ["mindee/errors/*"],
-        "#apiPaths": ["tests/data/api/api_paths.json"]
+        "#apiPaths": ["tests/data/api_paths.json"]
       }
   },
-  "include": ["./mindee/"],
-  "exclude": ["./node_modules/", "./dist/"]
+  "include": ["./mindee/**/*.ts"],
+  "exclude": ["./node_modules/", "./dist/", "./tests/**/*.spec.ts"]
 }

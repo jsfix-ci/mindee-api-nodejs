@@ -71,7 +71,7 @@ export class Invoice extends Document implements InvoiceInterface {
   merchantName: Field | undefined;
   time: Field | undefined;
   orientation: Orientation | undefined;
-  taxes: any[] | undefined;
+  taxes: Tax[] | undefined;
   totalTax: Amount | undefined;
   totalExcl: Amount | undefined;
   words: any[] | undefined;
@@ -370,7 +370,7 @@ export class Invoice extends Document implements InvoiceInterface {
     ) {
       this.taxes = (this.taxes as any[]).map((tax) => ({
         ...tax,
-        probability: 1.0,
+        confidence: 1.0,
       }));
       (this.totalTax as Amount).confidence = 1.0;
       (this.totalIncl as Amount).confidence = 1.0;
@@ -412,7 +412,7 @@ export class Invoice extends Document implements InvoiceInterface {
     ) {
       this.taxes = (this.taxes as any[]).map((tax) => ({
         ...tax,
-        probability: 1.0,
+        confidence: 1.0,
       }));
       (this.totalTax as Amount).confidence = 1.0;
       (this.totalExcl as Amount).confidence = 1.0;
@@ -440,7 +440,7 @@ export class Invoice extends Document implements InvoiceInterface {
     ) {
       this.taxes = (this.taxes as any[]).map((tax) => ({
         ...tax,
-        probability: 1.0,
+        confidence: 1.0,
       }));
       (this.totalTax as Amount).confidence = 1.0;
       (this.totalIncl as Amount).confidence = 1.0;
@@ -505,6 +505,8 @@ export class Invoice extends Document implements InvoiceInterface {
           Field.arrayConfidence(this.taxes) *
           (this.totalExcl as Amount).confidence,
       };
+      console.log(Field.arrayConfidence(this.taxes));
+      console.log(this.totalExcl as Amount);
       this.totalExcl = new Amount({
         prediction: totalExcl,
         valueKey: "value",

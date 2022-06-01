@@ -1,0 +1,14 @@
+{
+  "invoices": {
+    "all": "tests/data/invoice/response/complete.json",
+    "all_na": "tests/data/invoice/response/empty.json"
+  },
+  "receipts": {
+    "all": "tests/data/receipt/response/complete.json",
+    "all_na": "tests/data/receipt/response/empty.json"
+  },
+  "passports": {
+    "all": "tests/data/passport/response/complete.json",
+    "all_na": "tests/data/passport/response/empty.json"
+  }
+}
