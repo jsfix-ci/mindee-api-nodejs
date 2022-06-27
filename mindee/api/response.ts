@@ -1,52 +1,33 @@
-import { Receipt } from "../documents/receipt";
-import { Invoice } from "../documents/invoice";
-import { FinancialDocument } from "../documents/financialDocument";
 import { promises as fs } from "fs";
-import { CustomDocument } from "../documents/custom";
-import { Passport } from "../documents";
+import {
+  Document,
+  Passport,
+  Receipt,
+  Invoice,
+  FinancialDocument,
+  CustomDocument,
+} from "../documents";
+import { Input } from "../inputs";
 
-interface ResponseInterface {
+export class Response {
   httpResponse: any;
-  documentType: string;
-  input: any;
-  dump(path: string): any;
-  formatResponse(): void;
-}
+  readonly documentType: string;
+  inputFile: Input;
+  pages: Array<Document>;
+  document: Document | undefined;
 
-export class Response implements ResponseInterface {
-  httpResponse: any;
-  documentType: string;
-  input: any;
-
-  constructor({
-    httpResponse,
-    documentType,
-    input,
-    error,
-    reconstructed = false,
-    ...args
-  }: any) {
+  constructor({ httpResponse, documentType, input, error }: any) {
     this.httpResponse = httpResponse;
     this.documentType = documentType;
-    this.input = input;
-    if (!error && !reconstructed) {
+    this.inputFile = input;
+    this.pages = [];
+    if (!error) {
       this.formatResponse();
-    }
-    if (reconstructed === true) {
-      Object.assign(this, args);
     }
   }
 
   async dump(path: string) {
     return await fs.writeFile(path, JSON.stringify(Object.entries(this)));
-  }
-
-  static async load(path: string) {
-    const file = fs.readFile(path);
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    const args = JSON.parse(file);
-    return new Response({ reconstructed: true, ...args });
   }
 
   formatResponse() {
@@ -60,9 +41,6 @@ export class Response implements ResponseInterface {
       passport: (params: any) => new Passport(params),
     };
 
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    this[`${this.documentType}s`] = [];
     const documentWordsContent = [];
 
     // Create a list of Document (Receipt, Invoice...) for each page of the input document
@@ -79,45 +57,37 @@ export class Response implements ResponseInterface {
         );
       }
       if (this.documentType in constructors) {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        this[`${this.documentType}s`].push(
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        this.pages.push(
           // @ts-ignore
           constructors[this.documentType]({
             apiPrediction: prediction.prediction,
-            inputFile: this.input,
+            inputFile: this.inputFile,
             pageNumber: pageNumber,
             words: pageWordsContent,
             documentType: this.documentType,
           })
         );
         // Merge the list of Document into a unique Document
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
-        this[this.documentType] = constructors[this.documentType]({
+        this.document = constructors[this.documentType]({
           apiPrediction: httpDataDocument.inference.prediction,
-          inputFile: this.input,
+          inputFile: this.inputFile,
           pageNumber: httpDataDocument.n_pages,
           level: "document",
           words: documentWordsContent,
           documentType: this.documentType,
         });
       } else {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        this[`${this.documentType}s`].push(
+        this.pages.push(
           constructors["customDocument"]({
-            inputFile: this.input,
+            inputFile: this.inputFile,
             prediction: prediction.prediction,
             pageId: pageNumber,
             documentType: this.documentType,
           })
         );
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        this[this.documentType] = constructors["customDocument"]({
-          inputFile: this.input,
+        this.document = constructors["customDocument"]({
+          inputFile: this.inputFile,
           prediction: httpDataDocument.inference.prediction,
           pageId: pageNumber,
           documentType: this.documentType,

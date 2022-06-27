@@ -2,7 +2,7 @@ import { Invoice } from "../../mindee/documents";
 import { promises as fs } from "fs";
 import path from "path";
 import { expect } from "chai";
-import * as api_path from "../data/apiPaths.json";
+import * as apiPath from "../apiPaths.json";
 import {
   Amount,
   DateField,
@@ -15,7 +15,7 @@ import {
 describe("Invoice Object initialization", async () => {
   before(async function () {
     const jsonDataNA = await fs.readFile(
-      path.resolve(api_path.invoices.all_na)
+      path.resolve(apiPath.invoices.all_na)
     );
     this.basePrediction = JSON.parse(
       jsonDataNA.toString()
@@ -23,7 +23,7 @@ describe("Invoice Object initialization", async () => {
   });
 
   it("should initialize from a prediction object", async () => {
-    const jsonData = await fs.readFile(path.resolve(api_path.invoices.all));
+    const jsonData = await fs.readFile(path.resolve(apiPath.invoices.all));
     const response = JSON.parse(jsonData.toString());
     const invoice = new Invoice({
       apiPrediction: response.document.inference.pages[0].prediction,
@@ -37,7 +37,7 @@ describe("Invoice Object initialization", async () => {
   });
 
   it("should initialize from a N/A prediction object", async () => {
-    const jsonData = await fs.readFile(path.resolve(api_path.invoices.all_na));
+    const jsonData = await fs.readFile(path.resolve(apiPath.invoices.all_na));
     const response = JSON.parse(jsonData.toString());
     const invoice = new Invoice({
       apiPrediction: response.document.inference.pages[0].prediction,

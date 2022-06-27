@@ -6,6 +6,7 @@ import {
   BytesInput,
 } from "./inputs";
 import {
+  DocumentConfig,
   CustomDocConfig,
   FinancialDocConfig,
   InvoiceConfig,
@@ -18,7 +19,7 @@ import { logger, LOG_LEVELS } from "./logger";
 
 class DocumentClient {
   inputDoc: Input;
-  docConfigs: { [key: string]: any };
+  docConfigs: { [key: string]: DocumentConfig };
 
   constructor(inputDoc: Input, docConfigs: any) {
     this.inputDoc = inputDoc;
@@ -66,23 +67,18 @@ export class Client {
         : LOG_LEVELS["warn"];
   }
 
-  configInvoice(apiKey = "") {
+  configInvoice(apiKey: string = "") {
     this.docConfigs["mindee,invoice"] = new InvoiceConfig(apiKey);
     return this;
   }
 
-  configReceipt(apiKey = "") {
+  configReceipt(apiKey: string = "") {
     this.docConfigs["mindee,receipt"] = new ReceiptConfig(apiKey);
     return this;
   }
 
-  configFinancialDoc({
-    invoiceApiKey = "",
-    receiptApiKey = "",
-  }: {
-    [key: string]: string;
-  }) {
-    this.docConfigs["mindee,financialDocument"] = new FinancialDocConfig(
+  configFinancialDoc(invoiceApiKey: string = "", receiptApiKey: string = "") {
+    this.docConfigs["mindee,financialDoc"] = new FinancialDocConfig(
       invoiceApiKey,
       receiptApiKey
     );

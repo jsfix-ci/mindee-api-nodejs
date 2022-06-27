@@ -36,7 +36,7 @@ describe("Test different types of input", () => {
     );
     expect(input.inputType).to.equals("path");
     expect(input.filename).to.equals("receipt.jpg");
-    expect(input.fileExtension).to.equals("image/jpeg");
+    expect(input.mimeType).to.equals("image/jpeg");
     expect(input.fileObject).to.eqls(expectedResult);
   });
 
@@ -51,7 +51,7 @@ describe("Test different types of input", () => {
     );
     expect(input.inputType).to.equals("path");
     expect(input.filename).to.equals("receipt.tif");
-    expect(input.fileExtension).to.equals("image/tiff");
+    expect(input.mimeType).to.equals("image/tiff");
     expect(input.fileObject).to.eqls(expectedResult);
   });
 
@@ -66,7 +66,7 @@ describe("Test different types of input", () => {
     );
     expect(input.inputType).to.equals("path");
     expect(input.filename).to.equals("receipt.heic");
-    expect(input.fileExtension).to.equals("image/heic");
+    expect(input.mimeType).to.equals("image/heic");
     expect(input.fileObject).to.eqls(expectedResult);
   });
 
@@ -82,7 +82,7 @@ describe("Test different types of input", () => {
     await input.init();
     expect(input.inputType).to.equals("stream");
     expect(input.filename).to.equals(filename);
-    expect(input.fileExtension).to.equals("image/jpeg");
+    expect(input.mimeType).to.equals("image/jpeg");
     const expectedResult = await fs.promises.readFile(filePath);
     expect(input.fileObject.toString()).to.eqls(expectedResult.toString());
   });
@@ -100,7 +100,7 @@ describe("Test different types of input", () => {
     await input.init();
     expect(input.inputType).to.equals("bytes");
     expect(input.filename).to.equals(filename);
-    expect(input.fileExtension).to.equals("image/jpeg");
+    expect(input.mimeType).to.equals("image/jpeg");
     const expectedResult = await fs.promises.readFile(filePath);
     expect(input.fileObject.toString()).to.eqls(expectedResult.toString());
   });
@@ -113,7 +113,7 @@ describe("Test different types of input", () => {
     await inputDoc.init();
     expect(inputDoc.inputType).to.equals("path");
     expect(inputDoc.filename).to.equals("multipage.pdf");
-    expect(inputDoc.fileExtension).to.equals("application/pdf");
+    expect(inputDoc.mimeType).to.equals("application/pdf");
     expect(await inputDoc.countPages()).to.equals(3);
 
     // This is how the length of the word is set in the
@@ -142,7 +142,7 @@ describe("Test different types of input", () => {
     const expectedResult = await fs.promises.readFile(filePath);
     expect(inputDoc.inputType).to.equals("path");
     expect(inputDoc.filename).to.equals("multipage.pdf");
-    expect(inputDoc.fileExtension).to.equals("application/pdf");
+    expect(inputDoc.mimeType).to.equals("application/pdf");
     expect(await inputDoc.countPages()).to.equals(12);
     expect(inputDoc.fileObject).to.eql(expectedResult);
   });

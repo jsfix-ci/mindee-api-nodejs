@@ -10,34 +10,7 @@ import {
   DateField as Date,
 } from "./fields";
 
-interface InvoiceInterface {
-  pageNumber: number | undefined;
-  level: string;
-  locale: Locale | undefined;
-  totalIncl: Amount | undefined;
-  date: Date | undefined;
-  invoiceDate: Date | undefined;
-  dueDate: Date | undefined;
-  category: Field | undefined;
-  merchantName: Field | undefined;
-  time: Field | undefined;
-  orientation: Orientation | undefined;
-  taxes: TaxField[];
-  totalTax: Amount | undefined;
-  totalExcl: Amount | undefined;
-  words: any[] | undefined;
-  supplier: Field | undefined;
-  supplierAddress: Field | undefined;
-  invoiceNumber: Field | undefined;
-  paymentDetails: Field | undefined;
-  companyNumber: Field | undefined;
-  vatNumber: Field | undefined;
-  customerName: Field | undefined;
-  customerAddress: Field | undefined;
-  customerCompanyRegistration: Field | undefined;
-}
-
-export class Invoice extends Document implements InvoiceInterface {
+export class Invoice extends Document {
   /**
    *  @param {Object} apiPrediction - Json parsed prediction from HTTP response
    *  @param {Input} input - Input object
@@ -214,22 +187,24 @@ export class Invoice extends Document implements InvoiceInterface {
     if (words && words.length > 0) this.words = words;
   }
 
-  toString() {
+  toString(): string {
     const taxes = this.taxes.map((tax) => tax.toString()).join(" - ");
-    return `
-    -----Invoice data-----
-    Filename: ${this.filename}
-    Invoice number: ${(this.invoiceNumber as Field).value}
-    Total amount including taxes: ${(this.totalIncl as Amount).value}
-    Total amount excluding taxes: ${(this.totalExcl as Amount).value}
-    Invoice Date: ${(this.invoiceDate as Date).value}
-    Supplier name: ${(this.supplier as Field).value}
-    Supplier address: ${(this.supplierAddress as Field).value}
-    Customer name: ${(this.customerName as Field).value}
-    Customer address: ${(this.customerAddress as Field).value}
-    Taxes: ${taxes}
-    Total taxes: ${(this.totalTax as Amount).value}
-    `;
+    const outStr = `
+-----Invoice data-----
+Filename: ${this.filename}
+Invoice number: ${(this.invoiceNumber as Field).value}
+Total amount including taxes: ${(this.totalIncl as Amount).value}
+Total amount excluding taxes: ${(this.totalExcl as Amount).value}
+Invoice Date: ${(this.invoiceDate as Date).value}
+Supplier name: ${(this.supplier as Field).value}
+Supplier address: ${(this.supplierAddress as Field).value}
+Customer name: ${(this.customerName as Field).value}
+Customer address: ${(this.customerAddress as Field).value}
+Taxes: ${taxes}
+Total taxes: ${(this.totalTax as Amount).value}
+----------------------
+`;
+    return Invoice.cleanOutString(outStr);
   }
 
   #checklist() {

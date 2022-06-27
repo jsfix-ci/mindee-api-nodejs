@@ -1,27 +1,32 @@
 import { promises as fs } from "fs";
+import { Input } from "../inputs";
+
+export interface DocumentConstructorProps {
+  apiPrediction: { [index: string]: any };
+  inputFile?: Input;
+}
 
 export class Document {
-  documentType: string;
+  readonly documentType: string;
   checklist: any;
-  fileExtension: string | undefined;
-  filename: string | undefined;
+  mimeType: string | undefined;
+  filename: string = "";
   filepath: string | undefined;
 
   /**
    * Takes a list of Documents and return one Document where
    * each field is set with the maximum probability field
+   * @param documentType - the internal document type
    * @param {Input} inputFile - input file given to parse the document
    */
-  constructor(documentType: string, inputFile?: any) {
+  constructor(documentType: string, inputFile?: Input) {
     this.documentType = documentType;
     this.filepath = undefined;
-    this.filename = undefined;
-    this.fileExtension = undefined;
 
     if (inputFile !== undefined) {
       this.filepath = inputFile.filepath;
       this.filename = inputFile.filename;
-      this.fileExtension = inputFile.fileExtension;
+      this.mimeType = inputFile.mimeType;
     }
     this.checklist = {};
   }
@@ -43,7 +48,6 @@ export class Document {
   /** Create a Document from a JSON file */
   static async load(path: any) {
     const file = fs.readFile(path);
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     const args = JSON.parse(file);
     return new Document({ reconstructed: true, ...args });
@@ -72,5 +76,10 @@ export class Document {
       }
     }
     return finalDocument;
+  }
+
+  static cleanOutString(outStr: string): string {
+    const lines = / \n/gm;
+    return outStr.replace(lines, "\n");
   }
 }

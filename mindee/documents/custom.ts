@@ -2,7 +2,7 @@ import { Document } from "./document";
 import { ListField } from "./fields";
 
 export class CustomDocument extends Document {
-  fields: { [key: string]: any };
+  fields: { [key: string]: ListField };
   pageId: number;
 
   constructor({ inputFile, prediction, pageId, documentType }: any) {
@@ -17,19 +17,12 @@ export class CustomDocument extends Document {
   }
 
   toString(): string {
-    let outStr = `----- ${this.documentType} -----\n`;
-    for (const [name, info] of Object.entries(this.fields)) {
-      const valuesList: any[] = [];
-      info.values.forEach((value: any) => {
-        valuesList.push(value.content);
-      });
-      if (valuesList.length === 0) {
-        outStr += `${name}:\n`;
-      } else {
-        outStr += `${name}: ${valuesList.join(" ")}\n`;
-      }
+    let outStr = `----- ${this.documentType} -----`;
+    outStr += `\nFilename: ${this.filename}`.trimEnd();
+    for (const [name, fieldData] of Object.entries(this.fields)) {
+      outStr += `\n${name}: ${fieldData.toString()}`.trimEnd();
     }
-    outStr += "----------------------\n";
+    outStr += "\n----------------------\n";
     return outStr;
   }
 }

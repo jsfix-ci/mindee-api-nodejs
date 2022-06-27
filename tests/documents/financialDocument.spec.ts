@@ -1,7 +1,7 @@
 import { promises as fs } from "fs";
 import path from "path";
 import { expect } from "chai";
-import * as api_path from "../data/apiPaths.json";
+import * as apiPath from "../apiPaths.json";
 import { FinancialDocument } from "../../mindee/documents";
 import {
   Amount,
@@ -15,10 +15,10 @@ import {
 describe("Financial Document Object initialization", async () => {
   before(async function () {
     const invoiceJsonDataNA = await fs.readFile(
-      path.resolve(api_path.invoices.all_na)
+      path.resolve(apiPath.invoices.all_na)
     );
     const receiptJsonDataNA = await fs.readFile(
-      path.resolve(api_path.receipts.all_na)
+      path.resolve(apiPath.receipts.all_na)
     );
     this.invoiceBasePrediction = JSON.parse(
       invoiceJsonDataNA.toString()
@@ -29,10 +29,12 @@ describe("Financial Document Object initialization", async () => {
   });
 
   it("should initialize from an invoice object", async () => {
-    const jsonData = await fs.readFile(path.resolve(api_path.invoices.all));
+    const jsonData = await fs.readFile(path.resolve(apiPath.invoices.all));
     const response = JSON.parse(jsonData.toString());
+    console.log(response.document.inference.prediction)
     const financialDocument = new FinancialDocument({
-      apiPrediction: response.document.inference.pages[0].prediction,
+      apiPrediction: response.document.inference.prediction,
+      level: "document"
     });
     expect((financialDocument.date as DateField).value).to.be.equal(
       "2020-02-17"
@@ -45,7 +47,7 @@ describe("Financial Document Object initialization", async () => {
   });
 
   it("should initialize from a receipt object", async () => {
-    const jsonData = await fs.readFile(path.resolve(api_path.receipts.all));
+    const jsonData = await fs.readFile(path.resolve(apiPath.receipts.all));
     const response = JSON.parse(jsonData.toString());
     const financialDocument = new FinancialDocument({
       apiPrediction: response.document.inference.pages[0].prediction,

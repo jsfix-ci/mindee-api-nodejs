@@ -98,3 +98,17 @@ export class Field {
     return total;
   }
 }
+
+export class TypedField extends Field {
+  type: string
+
+  constructor({
+                prediction,
+                valueKey = "value",
+                reconstructed = false,
+                pageNumber,
+              }: FieldConstructor) {
+    super({prediction, valueKey, reconstructed, pageNumber});
+    this.type = prediction.type;
+  }
+}

@@ -8,17 +8,18 @@
     "build": "tsc",
     "clean": "rm -rf ./dist",
     "test": "mocha -r @babel/register -r tsconfig-paths/register 'tests/**/*.spec.ts'",
+    "lint-fix": "eslint 'mindee/**/*.ts' --fix",
     "lint": "eslint 'mindee/**/*.ts' --report-unused-disable-directives && echo 'Your .ts files look good.'",
     "docs": "jsdoc -r mindee -d docs"
   },
   "files": [
-    "mindee/",
+    "/dist",
     "LICENSE",
     "README.md",
     "CHANGELOG.md"
   ],
   "engines": {
-    "node": ">= 12.0.0"
+    "node": ">= 14.0.0"
   },
   "repository": {
     "type": "git",
@@ -58,13 +59,11 @@
     "typescript": "^4.7.4"
   },
   "dependencies": {
+    "commander": "^9.3.0",
     "file-type": "^16.5.3",
     "form-data": "^3.0.1",
     "mrz": "^3.1.4",
     "pdf-lib": "^1.17.1"
-  },
-  "engines": {
-    "node": ">= 14.0.0"
   },
   "keywords": [
     "typescript",

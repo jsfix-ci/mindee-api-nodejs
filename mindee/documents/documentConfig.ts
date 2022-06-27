@@ -8,6 +8,7 @@ import {
   ReceiptEndpoint,
 } from "../api/index";
 import {
+  Document,
   Invoice,
   CustomDocument,
   Passport,
@@ -24,9 +25,9 @@ interface CustomDocConstructor {
 }
 
 export class DocumentConfig {
-  docClass: any;
+  docClass: Document;
   documentType: string;
-  endpoints: [Endpoint];
+  endpoints: Array<Endpoint>;
 
   constructor(docClass: any, documentType: string, endpoints: any) {
     this.docClass = docClass;
@@ -35,7 +36,6 @@ export class DocumentConfig {
   }
 
   async predictRequest(inputDoc: Input, includeWords = false) {
-    await inputDoc.init();
     return await this.endpoints[0].predictRequest(inputDoc, includeWords);
   }
 
@@ -64,6 +64,7 @@ export class DocumentConfig {
   }
 
   async predict(inputDoc: Input, includeWords: boolean) {
+    await inputDoc.init();
     const response = await this.predictRequest(inputDoc, includeWords);
     return this.buildResult(inputDoc, response);
   }
@@ -90,6 +91,16 @@ export class FinancialDocConfig extends DocumentConfig {
       new ReceiptEndpoint(receiptApiKey),
     ];
     super(FinancialDocument, "financialDocument", endpoints);
+  }
+
+  async predictRequest(inputDoc: Input, includeWords = false) {
+    let endpoint: Endpoint;
+    if (inputDoc.isPdf()) {
+      endpoint = this.endpoints[0];
+    } else {
+      endpoint = this.endpoints[1];
+    }
+    return await endpoint.predictRequest(inputDoc, includeWords);
   }
 }
 

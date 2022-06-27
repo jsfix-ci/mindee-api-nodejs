@@ -3,7 +3,7 @@ export class ListFieldItem {
   confidence: number;
   polygon: any;
 
-  constructor(prediction: any) {
+  constructor(prediction: { [key: string]: any }) {
     this.content = prediction["content"];
     this.confidence = prediction["confidence"];
     this.polygon = prediction["polygon"];
@@ -11,7 +11,7 @@ export class ListFieldItem {
 }
 
 export class ListField {
-  values: any[];
+  values: ListFieldItem[];
   confidence: number;
   constructed: boolean;
   pageId: number;
@@ -31,5 +31,13 @@ export class ListField {
         this.values.push(new ListFieldItem(field));
       });
     }
+  }
+
+  toString(): string {
+    let outStr: string = "";
+    this.values.forEach((value: ListFieldItem) => {
+      outStr += `${value.content} `;
+    });
+    return outStr.trimEnd();
   }
 }

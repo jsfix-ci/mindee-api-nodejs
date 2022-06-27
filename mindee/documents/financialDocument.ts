@@ -10,37 +10,7 @@ import {
   DateField as Date,
 } from "./fields";
 
-interface FinancialDocumentInterface {
-  pageNumber: number | undefined;
-  level: string;
-  locale: Locale | undefined;
-  totalIncl: Amount | undefined;
-  date: Date | undefined;
-  invoiceDate: Date | undefined;
-  dueDate: Date | undefined;
-  category: Field | undefined;
-  merchantName: Field | undefined;
-  time: Field | undefined;
-  orientation: Orientation | undefined;
-  taxes: TaxField[];
-  totalTax: Amount | undefined;
-  totalExcl: Amount | undefined;
-  words: any[] | undefined;
-  supplier: Field | undefined;
-  supplierAddress: Field | undefined;
-  invoiceNumber: Field | undefined;
-  paymentDetails: Field | undefined;
-  companyNumber: Field | undefined;
-  vatNumber: Field | undefined;
-  customerName: Field | undefined;
-  customerAddress: Field | undefined;
-  customerCompanyRegistration: Field | undefined;
-}
-
-export class FinancialDocument
-  extends Document
-  implements FinancialDocumentInterface
-{
+export class FinancialDocument extends Document {
   /**
    *  @param {Object} apiPrediction - Json parsed prediction from HTTP response
    *  @param {Input} input - Input object
@@ -182,15 +152,16 @@ export class FinancialDocument
     }
   }
 
-  toString() {
-    return `
-    -----Financial document-----
-    Filename: ${this.filename}
-    Total amount: ${(this.totalIncl as Amount).value}
-    Date: ${(this.date as Date).value}
-    Supplier: ${(this.supplier as Field).value}
-    Total taxes: ${(this.totalTax as Amount).value}
-    `;
+  toString(): string {
+    const outStr = `-----Financial document-----
+Filename: ${this.filename}
+Total amount: ${(this.totalIncl as Amount).value}
+Date: ${(this.date as Date).value}
+Supplier: ${(this.supplier as Field).value}
+Total taxes: ${(this.totalTax as Amount).value}
+----------------------
+`;
+    return FinancialDocument.cleanOutString(outStr);
   }
 
   #checklist() {

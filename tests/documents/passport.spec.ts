@@ -2,12 +2,12 @@ import { promises as fs } from "fs";
 import path from "path";
 import { Passport } from "../../mindee/documents";
 import { expect } from "chai";
-import * as api_path from "../data/apiPaths.json";
+import * as apiPath from "../apiPaths.json";
 
 describe("Passport Object initialization", async () => {
   it("should load an empty document prediction", async () => {
     const jsonDataNA = await fs.readFile(
-      path.resolve(api_path.passports.all_na)
+      path.resolve(apiPath.passports.all_na)
     );
     const response = JSON.parse(jsonDataNA.toString());
     const passport = new Passport({
@@ -23,13 +23,13 @@ describe("Passport Object initialization", async () => {
   });
 
   it("should load a complete document prediction", async () => {
-    const jsonData = await fs.readFile(path.resolve(api_path.passports.all));
+    const jsonData = await fs.readFile(path.resolve(apiPath.passports.all));
     const response = JSON.parse(jsonData.toString());
     const passport = new Passport({
       apiPrediction: response.document.inference.pages[0].prediction,
     });
     const to_string = await fs.readFile(
-      path.join(api_path.passports.docToString)
+      path.join(apiPath.passports.docToString)
     );
 
     expect(passport.birthDate.confidence).to.be.equals(0.98);

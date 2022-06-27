@@ -45,15 +45,16 @@ export class TaxField extends Field {
   }
 
   toString(): string {
-    let str = "";
-    const keys = ["value", "rate", "code"];
-    for (const [i, key] of keys.entries()) {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      const value = this[key] === undefined ? "_" : this[key].toString();
-      if (i < keys.length - 1) str += `${value}${key === "rate" ? "%" : ""}; `;
-      else str += value;
+    let outStr = "";
+    if (this.value) {
+      outStr += `${this.value}`;
     }
-    return str;
+    if (this.rate) {
+      outStr += ` ${this.rate}%`;
+    }
+    if (this.code) {
+      outStr += ` ${this.code}`;
+    }
+    return outStr.trim();
   }
 }

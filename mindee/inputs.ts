@@ -16,29 +16,30 @@ const INPUT_TYPE_BASE64 = "base64";
 const INPUT_TYPE_BYTES = "bytes";
 const INPUT_TYPE_PATH = "path";
 
+const MIMETYPES = new Map<string, string>([
+  ["pdf", "application/pdf"],
+  ["heic", "image/heic"],
+  ["jpg", "image/jpeg"],
+  ["jpeg", "image/jpeg"],
+  ["png", "image/png"],
+  ["tif", "image/tiff"],
+  ["tiff", "image/tiff"],
+  ["webp", "image/webp"],
+]);
+const ALLOWED_INPUT_TYPES = [
+  INPUT_TYPE_STREAM,
+  INPUT_TYPE_BASE64,
+  INPUT_TYPE_BYTES,
+  INPUT_TYPE_PATH,
+];
+
 export class Input {
-  MIMETYPES = new Map<string, string>([
-    ["pdf", "application/pdf"],
-    ["heic", "image/heic"],
-    ["jpg", "image/jpeg"],
-    ["jpeg", "image/jpeg"],
-    ["png", "image/png"],
-    ["tif", "image/tiff"],
-    ["tiff", "image/tiff"],
-    ["webp", "image/webp"],
-  ]);
-  ALLOWED_INPUT_TYPES = [
-    INPUT_TYPE_STREAM,
-    INPUT_TYPE_BASE64,
-    INPUT_TYPE_BYTES,
-    INPUT_TYPE_PATH,
-  ];
   MAX_DOC_PAGES = 3;
   public inputType: string;
   public cutPages: boolean;
   public filename: string = "";
   public filepath?: string;
-  public fileExtension: string = "";
+  public mimeType: string = "";
   public fileObject: Buffer = Buffer.alloc(0);
 
   /**
@@ -49,8 +50,8 @@ export class Input {
    */
   constructor({ inputType, cutPages = true }: InputProps) {
     // Check if inputType is valid
-    if (!this.ALLOWED_INPUT_TYPES.includes(inputType)) {
-      const allowed = Array.from(this.MIMETYPES.keys()).join(", ");
+    if (!ALLOWED_INPUT_TYPES.includes(inputType)) {
+      const allowed = Array.from(MIMETYPES.keys()).join(", ");
       errorHandler.throw(
         new Error(`Invalid input type, must be one of ${allowed}.`)
       );
@@ -64,16 +65,20 @@ export class Input {
   }
 
   async cutDocPages() {
-    if (this.cutPages && this.fileExtension === "application/pdf") {
+    if (this.cutPages && this.isPdf()) {
       await this.cutPdf();
     }
+  }
+
+  isPdf(): boolean {
+    return this.mimeType === "application/pdf";
   }
 
   async checkMimetype(): Promise<string> {
     let mimeType: string;
     const fileExt = this.filename.split(".").pop();
     if (fileExt) {
-      mimeType = this.MIMETYPES.get(fileExt) || "";
+      mimeType = MIMETYPES.get(fileExt) || "";
     } else {
       const guess = await fileType.fromBuffer(this.fileObject);
       if (guess !== undefined) {
@@ -83,7 +88,7 @@ export class Input {
       }
     }
     if (!mimeType) {
-      const allowed = Array.from(this.MIMETYPES.keys()).join(", ");
+      const allowed = Array.from(MIMETYPES.keys()).join(", ");
       const err = new Error(`Invalid file type, must be one of ${allowed}.`);
       errorHandler.throw(err);
     }
@@ -145,7 +150,7 @@ export class PathInput extends Input {
 
   async init() {
     this.fileObject = Buffer.from(await fs.readFile(this.inputPath));
-    this.fileExtension = await this.checkMimetype();
+    this.mimeType = await this.checkMimetype();
     await this.cutDocPages();
   }
 }
@@ -174,7 +179,7 @@ export class Base64Input extends Input {
 
   async init() {
     this.fileObject = Buffer.from(this.inputString, "base64");
-    this.fileExtension = await this.checkMimetype();
+    this.mimeType = await this.checkMimetype();
     // clear out the string
     this.inputString = "";
     await this.cutDocPages();
@@ -205,7 +210,7 @@ export class StreamInput extends Input {
 
   async init() {
     this.fileObject = await this.stream2buffer(this.inputStream);
-    this.fileExtension = await this.checkMimetype();
+    this.mimeType = await this.checkMimetype();
     await this.cutDocPages();
   }
 
@@ -243,7 +248,7 @@ export class BytesInput extends Input {
 
   async init() {
     this.fileObject = Buffer.from(this.inputBytes, "hex");
-    this.fileExtension = await this.checkMimetype();
+    this.mimeType = await this.checkMimetype();
     // clear out the string
     this.inputBytes = "";
     await this.cutDocPages();

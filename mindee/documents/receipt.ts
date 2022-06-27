@@ -9,23 +9,7 @@ import {
 } from "./fields";
 import { promises as fs } from "fs";
 
-interface ReceiptInterface {
-  pageNumber: number | undefined;
-  level: string;
-  locale: Locale | undefined;
-  totalIncl: Amount | undefined;
-  date: DateField | undefined;
-  category: Field | undefined;
-  merchantName: Field | undefined;
-  time: Field | undefined;
-  orientation: Orientation | undefined;
-  taxes: TaxField[];
-  totalTax: Amount | undefined;
-  totalExcl: Amount | undefined;
-  words: any[] | undefined;
-}
-
-export class Receipt extends Document implements ReceiptInterface {
+export class Receipt extends Document {
   /**
    *  @param {Object} apiPrediction - Json parsed prediction from HTTP response
    *  @param {Input} input - Input object
@@ -153,17 +137,17 @@ export class Receipt extends Document implements ReceiptInterface {
 
   toString() {
     const taxes = this.taxes.map((tax: any) => tax.toString()).join(" - ");
-    return `
-    -----Receipt data-----
-    Filename: ${this.filename}
-    Total amount: ${(this.totalIncl as Amount).value}
-    Date: ${this.date?.value}
-    Category: ${(this.category as Field).value}
-    Time: ${(this.time as Field).value}
-    Merchant name: ${(this.merchantName as Field).value}
-    Taxes: ${taxes}
-    Total taxes: ${(this.totalTax as Amount).value}
-    `;
+    return `-----Receipt data-----
+Filename: ${this.filename}
+Total amount: ${(this.totalIncl as Amount).value}
+Date: ${this.date?.value}
+Category: ${(this.category as Field).value}
+Time: ${(this.time as Field).value}
+Merchant name: ${(this.merchantName as Field).value}
+Taxes: ${taxes}
+Total taxes: ${(this.totalTax as Amount).value}
+----------------------
+`;
   }
 
   static async load(path: any) {

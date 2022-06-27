@@ -1,6 +1,5 @@
 import { Document } from "./document";
 import { Field, DateField } from "./fields";
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import * as MRZ from "mrz";
 
@@ -87,8 +86,6 @@ export class Passport extends Document {
     const year = dateString.substring(0, 2) as string;
     const month = dateString.substring(2, 4) as string;
     const day = dateString.substring(4, 6) as string;
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
     return new Date(Number(year), Number(month) - 1, Number(day) + 1);
   }
 
@@ -100,8 +97,9 @@ export class Passport extends Document {
     );
   }
 
-  toString() {
-    return `-----Passport data-----
+  toString(): string {
+    const outStr = `-----Passport data-----
+Filename: ${this.filename}
 Full name: ${this.fullName.value}
 Given names: ${this.givenNames.map((name) => name.value)}
 Surname: ${this.surname.value}
@@ -115,6 +113,7 @@ MRZ 2: ${this.mrz2.value}
 MRZ: ${this.mrz.value}
 ----------------------
 `;
+    return Passport.cleanOutString(outStr);
   }
 
   isExpired(): boolean {

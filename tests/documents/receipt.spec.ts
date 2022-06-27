@@ -2,7 +2,7 @@ import { Receipt } from "../../mindee/documents";
 import { promises as fs } from "fs";
 import path from "path";
 import { expect } from "chai";
-import * as api_path from "../data/apiPaths.json";
+import * as apiPath from "../apiPaths.json";
 import {
   Amount,
   DateField,
@@ -13,14 +13,14 @@ import {
 
 describe("Receipt Object initialization", async () => {
   before(async function () {
-    const jsonData = await fs.readFile(path.resolve(api_path.receipts.all_na));
+    const jsonData = await fs.readFile(path.resolve(apiPath.receipts.all_na));
     this.basePrediction = JSON.parse(
       jsonData.toString()
     ).document.inference.pages[0].prediction;
   });
 
   it("should initialize from a prediction object", async () => {
-    const jsonData = await fs.readFile(path.resolve(api_path.receipts.all));
+    const jsonData = await fs.readFile(path.resolve(apiPath.receipts.all));
     const response = JSON.parse(jsonData.toString());
     const receipt = new Receipt({
       apiPrediction: response.document.inference.pages[0].prediction,
@@ -36,7 +36,7 @@ describe("Receipt Object initialization", async () => {
   });
 
   it("should initialize from a prediction object with N/A value", async () => {
-    const jsonData = await fs.readFile(path.resolve(api_path.receipts.all_na));
+    const jsonData = await fs.readFile(path.resolve(apiPath.receipts.all_na));
     const response = JSON.parse(jsonData.toString());
     const receipt = new Receipt({
       apiPrediction: response.document.inference.pages[0].prediction,
