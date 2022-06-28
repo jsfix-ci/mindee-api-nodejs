@@ -50,7 +50,8 @@
               "confidence": 0.82,
               "country": "GB",
               "currency": "GBP",
-              "language": "en"
+              "language": "en",
+              "value": "en-GB"
             },
             "orientation": {
               "confidence": 0.99,
@@ -185,7 +186,8 @@
           "confidence": 0.82,
           "country": "GB",
           "currency": "GBP",
-          "language": "en"
+          "language": "en",
+          "value": "en-GB"
         },
         "supplier": {
           "confidence": 0.71,

@@ -53,19 +53,12 @@ export class Endpoint {
     this.urlRoot = `${MINDEE_API_URL}/products/${owner}/${urlName}/v${version}`;
   }
 
-  apiKeyFromEnv(): string {
+  envVarKeyName(): string {
     let envKeyName: string = toSnakeCase(this.keyName);
-
     if (this.owner !== OTS_OWNER) {
       envKeyName = `${toSnakeCase(this.owner)}_${envKeyName}`;
     }
-    const envVarName = `MINDEE_${envKeyName}_API_KEY`.toUpperCase();
-    const envVarValue = process.env[envVarName];
-    if (envVarValue) {
-      logger.debug("Set from environment: %s", envVarName);
-      return envVarValue;
-    }
-    return "";
+    return `MINDEE_${envKeyName}_API_KEY`.toUpperCase();
   }
 
   /**
@@ -139,6 +132,16 @@ export class Endpoint {
         req.end();
       }
     });
+  }
+
+  protected apiKeyFromEnv(): string {
+    const envVarName = this.envVarKeyName();
+    const envVarValue = process.env[envVarName];
+    if (envVarValue) {
+      logger.debug("Set from environment: %s", envVarName);
+      return envVarValue;
+    }
+    return "";
   }
 }
 

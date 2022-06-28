@@ -6,17 +6,27 @@ import {
   Invoice,
   FinancialDocument,
   CustomDocument,
+  FullText,
 } from "../documents";
 import { Input } from "../inputs";
+
+interface ResponseProps {
+  httpResponse: any;
+  documentType: string;
+  input: Input;
+  error: boolean;
+}
+
+type stringDict = { [index: string]: any };
 
 export class Response {
   httpResponse: any;
   readonly documentType: string;
   inputFile: Input;
   pages: Array<Document>;
-  document: Document | undefined;
+  document?: Document;
 
-  constructor({ httpResponse, documentType, input, error }: any) {
+  constructor({ httpResponse, documentType, input, error }: ResponseProps) {
     this.httpResponse = httpResponse;
     this.documentType = documentType;
     this.inputFile = input;
@@ -31,68 +41,42 @@ export class Response {
   }
 
   formatResponse() {
-    const httpDataDocument = this.httpResponse.data.document;
-    const predictions = httpDataDocument.inference.pages.entries();
-    const constructors = {
+    const constructors: { [index: string]: CallableFunction } = {
       receipt: (params: any) => new Receipt(params),
       invoice: (params: any) => new Invoice(params),
-      financialDocument: (params: any) => new FinancialDocument(params),
+      financialDoc: (params: any) => new FinancialDocument(params),
       customDocument: (params: any) => new CustomDocument(params),
       passport: (params: any) => new Passport(params),
     };
+    if (!(this.documentType in constructors)) {
+      throw new Error(`Unknown document type: ${this.documentType}`);
+    }
+    const httpDataDocument = this.httpResponse.data.document;
 
-    const documentWordsContent = [];
-
-    // Create a list of Document (Receipt, Invoice...) for each page of the input document
-    for (const [pageNumber, prediction] of predictions) {
-      let pageWordsContent = [];
+    httpDataDocument.inference.pages.forEach((apiPage: stringDict) => {
+      const pageText = new FullText();
       if (
         "ocr" in httpDataDocument &&
         Object.keys(httpDataDocument.ocr).length > 0
       ) {
-        pageWordsContent =
-          httpDataDocument.ocr["mvision-v1"].pages[pageNumber].all_words;
-        documentWordsContent.push(
-          ...httpDataDocument.ocr["mvision-v1"].pages[pageNumber].all_words
-        );
+        pageText.words =
+          httpDataDocument.ocr["mvision-v1"].pages[apiPage.id].all_words;
       }
-      if (this.documentType in constructors) {
-        this.pages.push(
-          // @ts-ignore
-          constructors[this.documentType]({
-            apiPrediction: prediction.prediction,
-            inputFile: this.inputFile,
-            pageNumber: pageNumber,
-            words: pageWordsContent,
-            documentType: this.documentType,
-          })
-        );
-        // Merge the list of Document into a unique Document
-        // @ts-ignore
-        this.document = constructors[this.documentType]({
-          apiPrediction: httpDataDocument.inference.prediction,
+      this.pages.push(
+        constructors[this.documentType]({
+          apiPrediction: apiPage.prediction,
           inputFile: this.inputFile,
-          pageNumber: httpDataDocument.n_pages,
-          level: "document",
-          words: documentWordsContent,
           documentType: this.documentType,
-        });
-      } else {
-        this.pages.push(
-          constructors["customDocument"]({
-            inputFile: this.inputFile,
-            prediction: prediction.prediction,
-            pageId: pageNumber,
-            documentType: this.documentType,
-          })
-        );
-        this.document = constructors["customDocument"]({
-          inputFile: this.inputFile,
-          prediction: httpDataDocument.inference.prediction,
-          pageId: pageNumber,
-          documentType: this.documentType,
-        });
-      }
-    }
+          pageNumber: apiPage.id,
+          fullText: pageText,
+        })
+      );
+    });
+
+    this.document = constructors[this.documentType]({
+      apiPrediction: httpDataDocument.inference.prediction,
+      inputFile: this.inputFile,
+      documentType: this.documentType,
+    });
   }
 }

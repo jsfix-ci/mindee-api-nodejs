@@ -50,7 +50,6 @@ export class DocumentConfig {
       return new Response({
         httpResponse: response,
         documentType: this.documentType,
-        document: undefined,
         input: inputFile,
         error: true,
       });
@@ -58,15 +57,36 @@ export class DocumentConfig {
     return new Response({
       httpResponse: response,
       documentType: this.documentType,
-      document: inputFile,
       input: inputFile,
+      error: false,
     });
   }
 
-  async predict(inputDoc: Input, includeWords: boolean) {
+  async predict(inputDoc: Input, includeWords: boolean, cutPages: boolean) {
+    this.checkApiKeys();
     await inputDoc.init();
+    await this.cutDocPages(inputDoc, cutPages);
     const response = await this.predictRequest(inputDoc, includeWords);
     return this.buildResult(inputDoc, response);
+  }
+
+  async cutDocPages(inputDoc: Input, cutPages: boolean) {
+    if (cutPages && inputDoc.isPdf()) {
+      await inputDoc.cutPdf();
+    }
+  }
+
+  protected checkApiKeys() {
+    this.endpoints.forEach((endpoint) => {
+      if (!endpoint.apiKey) {
+        throw new Error(
+          `Missing API key for '${
+            endpoint.keyName
+          }', check your Client configuration.
+You can set this using the '${endpoint.envVarKeyName()}' environment variable.\n`
+        );
+      }
+    });
   }
 }
 
@@ -90,7 +110,7 @@ export class FinancialDocConfig extends DocumentConfig {
       new InvoiceEndpoint(invoiceApiKey),
       new ReceiptEndpoint(receiptApiKey),
     ];
-    super(FinancialDocument, "financialDocument", endpoints);
+    super(FinancialDocument, "financialDoc", endpoints);
   }
 
   async predictRequest(inputDoc: Input, includeWords = false) {

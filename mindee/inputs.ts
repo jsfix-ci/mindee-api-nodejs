@@ -8,7 +8,6 @@ import { Buffer } from "node:buffer";
 
 interface InputProps {
   inputType: string;
-  cutPages?: boolean;
 }
 
 const INPUT_TYPE_STREAM = "stream";
@@ -36,7 +35,6 @@ const ALLOWED_INPUT_TYPES = [
 export class Input {
   MAX_DOC_PAGES = 3;
   public inputType: string;
-  public cutPages: boolean;
   public filename: string = "";
   public filepath?: string;
   public mimeType: string = "";
@@ -48,7 +46,7 @@ export class Input {
    * @param {Boolean} cutPages
    * NB: Because of async calls, init() should be called after creating the object
    */
-  constructor({ inputType, cutPages = true }: InputProps) {
+  constructor({ inputType }: InputProps) {
     // Check if inputType is valid
     if (!ALLOWED_INPUT_TYPES.includes(inputType)) {
       const allowed = Array.from(MIMETYPES.keys()).join(", ");
@@ -57,17 +55,10 @@ export class Input {
       );
     }
     this.inputType = inputType;
-    this.cutPages = cutPages;
   }
 
   async init() {
     throw new Error("not Implemented");
-  }
-
-  async cutDocPages() {
-    if (this.cutPages && this.isPdf()) {
-      await this.cutPdf();
-    }
   }
 
   isPdf(): boolean {
@@ -78,7 +69,7 @@ export class Input {
     let mimeType: string;
     const fileExt = this.filename.split(".").pop();
     if (fileExt) {
-      mimeType = MIMETYPES.get(fileExt) || "";
+      mimeType = MIMETYPES.get(fileExt.toLowerCase()) || "";
     } else {
       const guess = await fileType.fromBuffer(this.fileObject);
       if (guess !== undefined) {
@@ -103,7 +94,7 @@ export class Input {
   }
 
   /** Merge PDF pages */
-  protected async cutPdf() {
+  async cutPdf() {
     const currentPdf = await PDFDocument.load(this.fileObject, {
       ignoreEncryption: true,
     });
@@ -133,16 +124,14 @@ export class Input {
 
 interface PathInputProps {
   inputPath: string;
-  cutPages: boolean;
 }
 
 export class PathInput extends Input {
   readonly inputPath: string;
 
-  constructor({ inputPath, cutPages }: PathInputProps) {
+  constructor({ inputPath }: PathInputProps) {
     super({
       inputType: INPUT_TYPE_PATH,
-      cutPages: cutPages,
     });
     this.inputPath = inputPath;
     this.filename = path.basename(this.inputPath);
@@ -151,7 +140,6 @@ export class PathInput extends Input {
   async init() {
     this.fileObject = Buffer.from(await fs.readFile(this.inputPath));
     this.mimeType = await this.checkMimetype();
-    await this.cutDocPages();
   }
 }
 
@@ -162,16 +150,14 @@ export class PathInput extends Input {
 interface Base64InputProps {
   inputString: string;
   filename: string;
-  cutPages: boolean;
 }
 
 export class Base64Input extends Input {
   private inputString: string;
 
-  constructor({ inputString, filename, cutPages }: Base64InputProps) {
+  constructor({ inputString, filename }: Base64InputProps) {
     super({
       inputType: INPUT_TYPE_BASE64,
-      cutPages: cutPages,
     });
     this.filename = filename;
     this.inputString = inputString;
@@ -182,7 +168,6 @@ export class Base64Input extends Input {
     this.mimeType = await this.checkMimetype();
     // clear out the string
     this.inputString = "";
-    await this.cutDocPages();
   }
 }
 
@@ -193,16 +178,14 @@ export class Base64Input extends Input {
 interface StreamInputProps {
   inputStream: ReadStream;
   filename: string;
-  cutPages: boolean;
 }
 
 export class StreamInput extends Input {
   private inputStream: ReadStream;
 
-  constructor({ inputStream, filename, cutPages }: StreamInputProps) {
+  constructor({ inputStream, filename }: StreamInputProps) {
     super({
       inputType: INPUT_TYPE_STREAM,
-      cutPages: cutPages,
     });
     this.filename = filename;
     this.inputStream = inputStream;
@@ -211,7 +194,6 @@ export class StreamInput extends Input {
   async init() {
     this.fileObject = await this.stream2buffer(this.inputStream);
     this.mimeType = await this.checkMimetype();
-    await this.cutDocPages();
   }
 
   async stream2buffer(stream: ReadStream): Promise<Buffer> {
@@ -231,16 +213,14 @@ export class StreamInput extends Input {
 interface BytesInputProps {
   inputBytes: string;
   filename: string;
-  cutPages: boolean;
 }
 
 export class BytesInput extends Input {
   private inputBytes: string;
 
-  constructor({ inputBytes, filename, cutPages }: BytesInputProps) {
+  constructor({ inputBytes, filename }: BytesInputProps) {
     super({
       inputType: INPUT_TYPE_BYTES,
-      cutPages: cutPages,
     });
     this.filename = filename;
     this.inputBytes = inputBytes;
@@ -251,6 +231,5 @@ export class BytesInput extends Input {
     this.mimeType = await this.checkMimetype();
     // clear out the string
     this.inputBytes = "";
-    await this.cutDocPages();
   }
 }

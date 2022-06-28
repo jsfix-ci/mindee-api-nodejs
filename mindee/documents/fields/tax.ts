@@ -1,4 +1,5 @@
 import { Field } from "./field";
+import { floatToString } from "./amount";
 
 interface TaxConstructor {
   prediction: any;
@@ -18,8 +19,9 @@ export class TaxField extends Field {
    * @param {Boolean} reconstructed - Does the object is reconstructed (not extracted by the API)
    * @param {Integer} pageNumber - Page number for multi-page PDF
    */
-  rate: number | undefined;
-  code: string | undefined;
+  value?: number = undefined;
+  rate?: number = undefined;
+  code?: string = undefined;
 
   constructor({
     prediction,
@@ -31,11 +33,13 @@ export class TaxField extends Field {
   }: TaxConstructor) {
     super({ prediction, valueKey, reconstructed, pageNumber });
 
-    this.rate = parseFloat(prediction[rateKey]);
+    this.rate = +parseFloat(prediction[rateKey]);
     if (isNaN(this.rate)) this.rate = undefined;
 
     this.code = prediction[codeKey]?.toString();
-    if (this.code === "N/A") this.code = undefined;
+    if (this.code === "N/A" || this.code === "None") {
+      this.code = undefined;
+    }
 
     this.value = parseFloat(prediction[valueKey]);
     if (isNaN(this.value)) {
@@ -46,13 +50,13 @@ export class TaxField extends Field {
 
   toString(): string {
     let outStr = "";
-    if (this.value) {
-      outStr += `${this.value}`;
+    if (this.value !== undefined) {
+      outStr += `${floatToString(this.value)}`;
     }
-    if (this.rate) {
-      outStr += ` ${this.rate}%`;
+    if (this.rate !== undefined) {
+      outStr += ` ${floatToString(this.rate)}%`;
     }
-    if (this.code) {
+    if (this.code !== undefined) {
       outStr += ` ${this.code}`;
     }
     return outStr.trim();

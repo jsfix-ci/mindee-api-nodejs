@@ -13,17 +13,17 @@ export class ListFieldItem {
 export class ListField {
   values: ListFieldItem[];
   confidence: number;
-  constructed: boolean;
-  pageId: number;
+  reconstructed: boolean;
+  pageId?: number;
 
   constructor(
     prediction: { [key: string]: any },
-    pageId: number,
+    pageId: number | undefined,
     constructed = false
   ) {
     this.values = [];
     this.confidence = prediction["confidence"];
-    this.constructed = constructed;
+    this.reconstructed = constructed;
     this.pageId = pageId;
 
     if (Object.prototype.hasOwnProperty.call(prediction, "values")) {

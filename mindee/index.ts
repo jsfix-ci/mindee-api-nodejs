@@ -17,6 +17,16 @@ import { ReadStream } from "fs";
 import { errorHandler } from "./errors/handler";
 import { logger, LOG_LEVELS } from "./logger";
 
+interface ParseParams {
+  documentType: string;
+  username?: string;
+}
+
+interface ParseOptions {
+  cutPages?: boolean;
+  fullText?: boolean;
+}
+
 class DocumentClient {
   inputDoc: Input;
   docConfigs: { [key: string]: DocumentConfig };
@@ -26,7 +36,10 @@ class DocumentClient {
     this.docConfigs = docConfigs;
   }
 
-  async parse(documentType: string, username?: string, includeWords = false) {
+  async parse(
+    { documentType, username }: ParseParams,
+    { cutPages = true, fullText = false }: ParseOptions
+  ) {
     const found: any = [];
     Object.keys(this.docConfigs).forEach((conf) => {
       const splitConf = conf.split(",");
@@ -46,17 +59,20 @@ class DocumentClient {
     // }
 
     const docConfig = this.docConfigs[configKey.toString()];
-    return await docConfig.predict(this.inputDoc, includeWords);
+    return await docConfig.predict(this.inputDoc, fullText, cutPages);
   }
 }
 
+/**
+ * Hello there!
+ */
 export class Client {
-  /**
-   * @param {boolean} throwOnError - Throw if an error is sent from the API (default: true)
-   */
-
   docConfigs: { [key: string]: any };
 
+  /**
+   * @param {boolean} throwOnError - Throw if an error is sent from the API (default: true)
+   * @param debug - Force debug logging (default: false)
+   */
   constructor(throwOnError: boolean = true, debug: boolean = false) {
     this.docConfigs = {};
 
@@ -85,7 +101,7 @@ export class Client {
     return this;
   }
 
-  configPassport(apiKey = "") {
+  configPassport(apiKey: string = "") {
     this.docConfigs["mindee,passport"] = new PassportConfig(apiKey);
     return this;
   }
@@ -105,45 +121,33 @@ export class Client {
     return this;
   }
 
-  docFromPath(inputPath: string, cutPages: boolean = true) {
+  docFromPath(inputPath: string) {
     const doc = new PathInput({
       inputPath: inputPath,
-      cutPages: cutPages,
     });
     return new DocumentClient(doc, this.docConfigs);
   }
 
-  docFromBase64(
-    inputString: string,
-    filename: string,
-    cutPages: boolean = true
-  ) {
+  docFromBase64(inputString: string, filename: string) {
     const doc = new Base64Input({
       inputString: inputString,
       filename: filename,
-      cutPages: cutPages,
     });
     return new DocumentClient(doc, this.docConfigs);
   }
 
-  docFromStream(
-    inputStream: ReadStream,
-    filename: string,
-    cutPages: boolean = true
-  ) {
+  docFromStream(inputStream: ReadStream, filename: string) {
     const doc = new StreamInput({
       inputStream: inputStream,
       filename: filename,
-      cutPages: cutPages,
     });
     return new DocumentClient(doc, this.docConfigs);
   }
 
-  docFromBytes(inputBytes: string, filename: string, cutPages: boolean = true) {
+  docFromBytes(inputBytes: string, filename: string) {
     const doc = new BytesInput({
       inputBytes: inputBytes,
       filename: filename,
-      cutPages: cutPages,
     });
     return new DocumentClient(doc, this.docConfigs);
   }

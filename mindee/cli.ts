@@ -1,5 +1,5 @@
 import { Command } from "commander";
-import { Client } from "../mindee/index";
+import { Client } from "./index";
 
 const program = new Command();
 
@@ -7,44 +7,44 @@ interface OtsCliConfig {
   help: string;
   requiredKeys: Array<string>;
   docType: string;
-  configFunc: string;
 }
+
+const COMMAND_INVOICE = "invoice";
+const COMMAND_RECEIPT = "receipt";
+const COMMAND_PASSPORT = "passport";
+const COMMAND_FINANCIAL = "financial";
 
 const OTS_DOCUMENTS = new Map<string, OtsCliConfig>([
   [
-    "invoice",
+    COMMAND_INVOICE,
     {
       help: "Invoice",
       requiredKeys: ["invoice"],
       docType: "invoice",
-      configFunc: "configInvoice",
     },
   ],
   [
-    "receipt",
+    COMMAND_RECEIPT,
     {
       help: "Expense Receipt",
       requiredKeys: ["receipt"],
       docType: "receipt",
-      configFunc: "configReceipt",
     },
   ],
   [
-    "passport",
+    COMMAND_PASSPORT,
     {
       help: "Passport",
       requiredKeys: ["passport"],
       docType: "passport",
-      configFunc: "configPassport",
     },
   ],
   [
-    "financial",
+    COMMAND_FINANCIAL,
     {
       help: "Financial Document (receipt or invoice)",
       requiredKeys: ["invoice", "receipt"],
       docType: "financialDoc",
-      configFunc: "configFinancialDoc",
     },
   ],
 ]);
@@ -53,18 +53,42 @@ async function predictCall(command: string, inputPath: string, options: any) {
   const info = OTS_DOCUMENTS.get(command);
   const mindeeClient = new Client();
   if (!info) {
-    throw `Invalid document type ${command}`;
+    throw new Error(`Invalid document type ${command}`);
   }
-  if (info.requiredKeys.length > 1) {
-    throw "Not yet implemented, sorry :-(";
-  } else {
-    // @ts-ignore
-    mindeeClient[info.configFunc](options[`${info.docType}Key`]);
+  switch (info.docType) {
+    case COMMAND_INVOICE: {
+      mindeeClient.configInvoice(options.invoiceKey);
+      break;
+    }
+    case COMMAND_RECEIPT: {
+      mindeeClient.configReceipt(options.receiptKey);
+      break;
+    }
+    case COMMAND_PASSPORT: {
+      mindeeClient.configPassport(options.passportKey);
+      break;
+    }
+    case COMMAND_FINANCIAL: {
+      mindeeClient.configFinancialDoc(options.invoiceKey, options.receiptKey);
+      break;
+    }
+    default: {
+      throw new Error(`Invalid document type ${command}`);
+    }
   }
   const doc = mindeeClient.docFromPath(inputPath);
-  const result = await doc.parse(command);
+  const result = await doc.parse(
+    {
+      documentType: info.docType,
+      username: undefined,
+    },
+    {
+      cutPages: options.cutPages,
+      fullText: options.fullText,
+    }
+  );
   if (result.document) {
-    console.log(result.document.toString());
+    console.log(`\n${result.document}`);
   }
 }
 
@@ -73,6 +97,7 @@ export function cli() {
 
   OTS_DOCUMENTS.forEach((info, name) => {
     const prog = program.command(name);
+    prog.description(info.help);
 
     info.requiredKeys.forEach((keyName) => {
       prog.option(
@@ -80,7 +105,8 @@ export function cli() {
         `API key for ${keyName} document endpoint`
       );
     });
-    prog.option("--no-cut-pages", "Don't cut document pages");
+    prog.option("-C, --no-cut-pages", "Don't cut document pages");
+    prog.option("-t, --full-text", "Include full document text in response");
     prog.argument("<input_path>", "Full path to the file");
     prog.action((inputPath: string, options: any, command: any) => {
       predictCall(command.name(), inputPath, options);

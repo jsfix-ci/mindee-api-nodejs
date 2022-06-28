@@ -8,5 +8,5 @@ Time: 15:20
 Merchant name: CLACHAN
 Taxes: 1.7 20.0%
 Total taxes: 1.7
-Locale: en; en; GB; GBP;
+Locale: en-GB; en; GB; GBP;
 ----------------------

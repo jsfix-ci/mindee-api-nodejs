@@ -1,33 +1,58 @@
 import { promises as fs } from "fs";
 import { Input } from "../inputs";
+import { Polygon } from "../geometry";
 
 export interface DocumentConstructorProps {
   apiPrediction: { [index: string]: any };
   inputFile?: Input;
+  pageNumber?: number;
+  fullText?: FullText;
+}
+
+type Word = {
+  polygon: Polygon;
+  text: string;
+  confidence: number;
+};
+
+export class FullText {
+  words: Word[] = [];
 }
 
 export class Document {
   readonly documentType: string;
-  checklist: any;
+  checklist: { [index: string]: boolean };
   mimeType: string | undefined;
   filename: string = "";
   filepath: string | undefined;
+  fullText?: FullText;
+  pageNumber?: number | undefined;
 
   /**
    * Takes a list of Documents and return one Document where
    * each field is set with the maximum probability field
    * @param documentType - the internal document type
    * @param {Input} inputFile - input file given to parse the document
+   * @param {number} pageNumber - Page number (ID)
+   * @param {FullText} fullText - full OCR extracted text
    */
-  constructor(documentType: string, inputFile?: Input) {
+  constructor(
+    documentType: string,
+    inputFile?: Input,
+    pageNumber?: number,
+    fullText?: FullText
+  ) {
     this.documentType = documentType;
     this.filepath = undefined;
+    this.pageNumber = pageNumber;
 
     if (inputFile !== undefined) {
       this.filepath = inputFile.filepath;
       this.filename = inputFile.filename;
       this.mimeType = inputFile.mimeType;
     }
+    this.fullText = fullText;
+
     this.checklist = {};
   }
 
@@ -37,20 +62,12 @@ export class Document {
 
   /** return true if all checklist of the document if true */
   checkAll() {
-    return this.checklist.every((item: any) => item === true);
+    return Object.values(this.checklist).every((item) => item);
   }
 
   /** Export document into a JSON file */
   async dump(path: any) {
     return await fs.writeFile(path, JSON.stringify(Object.entries(this)));
-  }
-
-  /** Create a Document from a JSON file */
-  static async load(path: any) {
-    const file = fs.readFile(path);
-    // @ts-ignore
-    const args = JSON.parse(file);
-    return new Document({ reconstructed: true, ...args });
   }
 
   /**

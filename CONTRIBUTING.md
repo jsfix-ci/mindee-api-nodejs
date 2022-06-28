@@ -30,7 +30,7 @@ To help maintainers and the community to be efficient, follow these guidelines:
 
 Include details about your configuration and environment:
 
-* **Which version of remindee-api-nodejs are you using?**
+* **Which version of mindee-api-nodejs are you using?**
 * **What's the name and version of the OS you're using**?
 
 ### Suggesting Enhancements
