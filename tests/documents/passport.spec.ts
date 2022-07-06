@@ -1,6 +1,6 @@
 import { promises as fs } from "fs";
 import * as path from "path";
-import { Passport } from "../../mindee/documents";
+import { Passport } from "../../src/documents";
 import { expect } from "chai";
 import { dataPath } from "../apiPaths";
 

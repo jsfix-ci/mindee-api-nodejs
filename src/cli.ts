@@ -77,16 +77,11 @@ async function predictCall(command: string, inputPath: string, options: any) {
     }
   }
   const doc = mindeeClient.docFromPath(inputPath);
-  const result = await doc.parse(
-    {
-      documentType: info.docType,
-      username: undefined,
-    },
-    {
-      cutPages: options.cutPages,
-      fullText: options.fullText,
-    }
-  );
+  const result = await doc.parse(info.docType, {
+    username: undefined,
+    cutPages: options.cutPages,
+    fullText: options.fullText,
+  });
   if (result.document) {
     console.log(`\n${result.document}`);
   }
