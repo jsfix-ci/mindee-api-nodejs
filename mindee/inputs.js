@@ -55,7 +55,7 @@ class Input {
     this.fileExtension = undefined;
 
     if (this.allowCutPdf == true) {
-      const typeOfFile = await fileType.fromBuffer(
+      const typeOfFile = await fileType.fileTypeFromBuffer(
         Buffer.from(this.fileObject, "base64")
       );
 
